@@ -6,18 +6,20 @@ const { frontmatter } = Astro.props
 ---
 
 <Main title={frontmatter.title}>
-  <div class="mx-auto max-w-3xl text-base leading-7">
-    <div class="flex items-center gap-x-4 text-base my-10">
-      <time datetime={frontmatter.pubDate} class="text-slate-300">{dayjs(frontmatter.pubDate).format("MMMM, D YYYY")}</time>
+  <div class="mx-auto max-w-7xl px-6 lg:px-8">
+    <div class="mx-auto max-w-3xl text-base leading-7">
+      <div class="flex items-center gap-x-4 text-base my-10">
+        <time datetime={frontmatter.pubDate} class="text-slate-300">{dayjs(frontmatter.pubDate).format("MMMM, D YYYY")}</time>
+      </div>
+      <div>
+        {frontmatter.tags.map((tag: string) => 
+          <span class="inline-flex items-center rounded-full bg-purple-500/20 px-3 py-2 text-sm font-medium text-purple-400 ring-1 ring-inset ring-purple-400/20">#{tag}</span>
+        )}
+      </div>
+      <img src={frontmatter.image.url} alt={frontmatter.image.alt} class="rounded-md my-10" />
+      <article class="prose prose-invert prose-img:rounded-lg prose-h1:text-5xl lg:prose-xl" >
+        <slot />
+      </article>
     </div>
-    <div>
-      {frontmatter.tags.map((tag: string) => 
-        <span class="inline-flex items-center rounded-full bg-purple-500/20 px-3 py-2 text-sm font-medium text-purple-400 ring-1 ring-inset ring-purple-400/20">#{tag}</span>
-      )}
-    </div>
-    <img src={frontmatter.image.url} alt={frontmatter.image.alt} class="rounded-md my-10" />
-    <article class="prose prose-invert prose-img:rounded-lg prose-h1:text-5xl lg:prose-xl" >
-      <slot />
-    </article>
   </div>
 </Main>
