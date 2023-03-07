@@ -1,5 +1,6 @@
 ---
 layout: "../../layouts/Blog.astro"
+id: 1
 title: "Private Beta Release"
 pubDate: 2023-02-27
 description: "Going from alpha to private beta is a huge update. We highlight some of the features we've released in the private beta."
