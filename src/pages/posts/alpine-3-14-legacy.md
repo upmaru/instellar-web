@@ -29,8 +29,7 @@ These versions of Alpine are still supported by LXD's image server. However, whe
 
 ### New Applications
 
-If you are deploying new applications, we recommend using the latest version of Alpine, which is currently alpine/3.17. To update your application, simply change the version in your instellar.yml file.
-Existing Applications
+If you are deploying new applications, we recommend using the latest version of Alpine, which is currently alpine/3.17. To update your stack, simply set the `stack: alpine/3.17` in your instellar.yml file.
 
 ### Existing Applications
 
