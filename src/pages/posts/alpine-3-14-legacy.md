@@ -2,7 +2,7 @@
 layout: "../../layouts/Blog.astro"
 id: 3
 title: "Alpine 3.14 Legacy"
-pubDate: 2023-03-12
+pubDate: 2023-03-11
 description: "We recommend customers using alpine 3.14 image to upgrade to a newer version alpine 3.15 or higher."
 author:
   avatar: /authors/zack-siri.jpeg
