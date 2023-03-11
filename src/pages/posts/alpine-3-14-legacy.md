@@ -23,9 +23,9 @@ Alpine Linux version 3.14 will continue to be supported by Alpine Linux, but Ins
     Alpine 3.16 - alpine/3.16
     Alpine 3.17 - alpine/3.17
 
-These versions of Alpine are still supported by LXD's image server. However, when Alpine 3.18 is released, Alpine 3.14 may be dropped. It is important to keep this in mind when selecting an Alpine version for your application. If you require a specific version that is not available on LXD's image server, you may need to build your own image or consider an alternative solution.
+These versions of Alpine are still supported by LXD's image server. However, when Alpine 3.18 is released, Alpine 3.14 may be dropped. It is important to keep this in mind when selecting an Alpine version for your application.
 
-## Actions Required
+## Recommended Actions
 
 ### New Applications
 
