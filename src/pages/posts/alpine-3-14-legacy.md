@@ -41,7 +41,7 @@ Additionally, check what programming language versions and frameworks are suppor
 
 If you are planning to upgrade from Alpine 3.14, it's important to plan enough time to ensure a smooth upgrade path. It's worth noting that some packages have been dropped from Alpine 3.14, specifically any package that depends on qt5-qtwebkit. This may affect some applications that rely on those packages, so it's important to review your dependencies before upgrading.
 
-You can read more about the changes in the [Alpine 3.15 Release Notes](https://alpinelinux.org/posts/Alpine-3.15.0-released.html). We recommend going through your list of dependencies to ensure you don't depend on any package that is not available in Alpine 3.15 or newer versions. If you do, you may need to figure out an alternative way to satisfy those dependencies. If you need assistance or have any questions, please reach out to our [support team](support@instellar.app).
+You can read more about the changes in the [Alpine 3.15 Release Notes](https://alpinelinux.org/posts/Alpine-3.15.0-released.html). We recommend going through your list of dependencies to ensure you don't depend on any package that is not available in Alpine 3.15 or newer versions. If you do, you may need to figure out an alternative way to satisfy those dependencies. If you need assistance or have any questions, please reach out to our [support team](mailto:support@instellar.app).
 
 ## Estimated Timeline
 
