@@ -2,10 +2,10 @@
 import Main from './Main.astro'
 import dayjs from 'dayjs'
 
-const { frontmatter } = Astro.props  
+const { frontmatter, url } = Astro.props  
 ---
 
-<Main title={frontmatter.title} description={frontmatter.description} cover={`https://instellar.app${frontmatter.image.url}`}>
+<Main title={frontmatter.title} description={frontmatter.description} url={`https://instellar.app${url}`} cover={`https://instellar.app${frontmatter.image.url}`}>
   <div class="mx-auto max-w-7xl px-6 lg:px-8">
     <div class="mx-auto max-w-3xl text-base leading-7">
       <div class="flex items-center gap-x-4 text-base my-10">
