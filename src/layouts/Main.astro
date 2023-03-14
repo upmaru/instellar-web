@@ -1,6 +1,6 @@
 ---
 const year = new Date().getFullYear()
-const { title } = Astro.props
+const { title, description, cover } = Astro.props
 ---
 
 <html lang="en">
@@ -17,14 +17,14 @@ const { title } = Astro.props
 	  <meta name="viewport" content="width=device-width" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@InstellarApp" />
-    <meta name="twitter:title" content="PaaS on your infrastructure" />
-    <meta name="twitter:description" content="Develop and push to github and deploy on your own hardware or cloud of your choice." />
-    <meta name="twitter:image" content="https://instellar.app/previews/home.png" />
+    <meta name="twitter:title" content={title || "PaaS on your infrastructure"} />
+    <meta name="twitter:description" content={description || "Develop and push to github and deploy on your own hardware or cloud of your choice."} />
+    <meta name="twitter:image" content={cover || "https://instellar.app/previews/home.png"} />
     <meta property="og:url" content="https://instellar.app/" />
     <meta property="og:type" content="website" /> 
-    <meta property="og:title" content="PaaS on your infrastructure" />
-    <meta property="og:description" content="Develop and push to github and deploy on your own hardware or cloud of your choice." />
-    <meta property="og:image" content="https://instellar.app/previews/home.png" />
+    <meta property="og:title" content={title || "PaaS on your infrastructure"}/>
+    <meta property="og:description" content={description || "Develop and push to github and deploy on your own hardware or cloud of your choice."} />
+    <meta property="og:image" content={cover || "https://instellar.app/previews/home.png"} />
 		<meta name="generator" content={Astro.generator} />
     <script defer data-domain="instellar.app" src="https://plausible.io/js/script.js"></script>
 		<title>{title || "Instellar"}</title>
