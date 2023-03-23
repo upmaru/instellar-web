@@ -20,7 +20,7 @@ const MainNav: FunctionComponent<MainNavProps> = (props) => {
   return (
     <Popover>
       <nav className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
-        <a href="/" class="-m-1.5 p-1.5">
+        <a href="/" className="-m-1.5 p-1.5">
           <span className="sr-only">Instellar.app</span>
           <img className="h-8 w-auto" src="/instellar-logo.png" alt="" />
         </a>
@@ -57,7 +57,7 @@ const MainNav: FunctionComponent<MainNavProps> = (props) => {
           <div className="overflow-hidden rounded-lg bg-slate-900 border-2 border-slate-800 shadow-md ring-1 ring-black ring-opacity-5">
             <div className="flex items-center justify-between px-5 pt-4">
               <div>
-                <img class="h-8 w-auto" src="/instellar-logo.png" alt="" />
+                <img className="h-8 w-auto" src="/instellar-logo.png" alt="Instellar logo" />
               </div>
               <div className="-mr-2">
                 <Popover.Button className="inline-flex items-center justify-center rounded-md bg-slate-700/10 p-2 text-gray-400 hover:bg-slate-600/10 focus:outline-none">
