@@ -24,7 +24,7 @@ const MainNav: FunctionComponent<MainNavProps> = (props) => {
           <span className="sr-only">Instellar.app</span>
           <img className="h-8 w-auto" src="/instellar-logo.png" alt="" />
         </a>
-        <div className="-mr-2 flex items-center md:hidden">
+        <div className="-mr-2 flex items-center lg:hidden">
           <Popover.Button className="inline-flex items-center justify-center rounded-md p-2 text-slate-700 hover:text-slate-500 focus:outline-none">
             <span className="sr-only">Open main menu</span>
             <Bars3Icon className="h-6 w-6" aria-hidden="true" />
@@ -52,7 +52,7 @@ const MainNav: FunctionComponent<MainNavProps> = (props) => {
       >
         <Popover.Panel
           focus
-          className="absolute inset-x-0 top-0 z-10 origin-top-right transform p-2 transition md:hidden"
+          className="absolute inset-x-0 top-0 z-10 origin-top-right transform p-2 transition lg:hidden"
         >
           <div className="overflow-hidden rounded-lg bg-slate-900 border-2 border-slate-800 shadow-md ring-1 ring-black ring-opacity-5">
             <div className="flex items-center justify-between px-5 pt-4">
