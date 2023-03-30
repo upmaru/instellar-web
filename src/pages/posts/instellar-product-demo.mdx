@@ -1,0 +1,77 @@
+---
+layout: "../../layouts/Blog.astro"
+id: 4
+title: "Instellar.app Product Demo"
+pubDate: 2023-03-11
+description: "This post brings together everything in instellar.app, and show you the power of our platform."
+author:
+  avatar: /authors/zack-siri.jpeg
+  name: "Zack Siri"
+  position: "Founder / CEO"
+tags: ["screencast"]
+image:
+  url: /posts/instellar-product-demo/cover.jpg
+  alt: Cover image for Instellar.app product Demo
+---
+import { YouTube } from '@astro-community/astro-embed-youtube'
+
+# Instellar.app Product Demo
+
+We're making good progress on our product. We're putting in place things in our product that will serve as the foundation and change the way people deploy web applications! In this video we cover the following.
+
+<YouTube id="oqlzh34AF4Q" />
+
+## Setup a brand new EC2 Instance
+
+For this demo we are using EC2 for demonstration purposes. However it's important to keep in mind that VMs or bare metals hosted anywhere can be utilized with Instellar.app. Once LXD is setup on the instance and the correct security ports are opened you are able to add the machine to instellar.
+
+## Setup LXD
+
+LXD is extremely easy to setup and scale. The wizard initializer has great defaults and enables anyone to setup an extremely powerful compute platform in a very short amount of time. It's important to keep in mind that port `8443` needs to be exposed for instellar to be able to manage LXD.
+
+Initializing LXD is as simple as running
+
+```shell
+sudo lxd init
+```
+
+Once you've setup LXD simply reboot. Next we'll connect the LXD node to instellar by running the following:
+
+```shell
+lxc config trust add
+```
+
+LXD will ask you for a name, simply type `instellar` and it will give you back a token which you can simply use in instellar.
+
+## Connecting to Instellar.app
+
+Next we simply need to add the LXD node to instellar app. All we have to do is supply the `ip_address:8443` and give it the `token` that was generated and instellar will do the rest. Once you see the cluster show up in instellar, you can setup Uplink next.
+
+![setup new cluster](/posts/instellar-product-demo/setup-new-cluster.jpg)
+
+## Setting up Uplink
+
+Setting up uplink is very straight forward, simply click the `Setup` button on the cluster page and you will be able to setup uplink on your cluster. Uplink utlizes something called 'kits' which is currently unreleased however this is something that will help simplify every setup out there. We will be release kits in the near future.
+
+![setup uplink](/posts/instellar-product-demo/setup-uplink.jpg)
+
+## Setting up our Web App
+
+To setup our web app all we have to do is create the `Installation` and setup the required environment variables.
+
+![setup installation](/posts/instellar-product-demo/setup-web-app.jpg)
+
+Once we've setup all the dependencies all we have to do is hit `sync` and instellar will propagate the change instructions to `Uplink` and 'make it so'.
+
+![container provisioning log](/posts/instellar-product-demo/app-provision-log.jpg)
+
+## Domain Routing
+
+To route the domain to our service all we have to do is create an `A` record or `CNAME` record with the ip or domain of our VM. We also need to make sure we've setup the hosts on our installation.
+
+![setup hosts](/posts/instellar-product-demo/setup-hosts.jpg)
+
+This change will be propagated to `Uplink` and once the dns settings takes place, the ssl certificate will automatically be issued. Behind the scenes uplink is using caddy app server to provision ssl certificate and provide load balancing.
+
+
+
