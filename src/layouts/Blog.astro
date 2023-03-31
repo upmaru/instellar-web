@@ -11,7 +11,7 @@ const { frontmatter, url } = Astro.props
       <div class="flex items-center gap-x-4 text-base my-10">
         <time datetime={frontmatter.pubDate} class="text-slate-300">{dayjs(frontmatter.pubDate).format("MMMM, D YYYY")}</time>
       </div>
-      <div>
+      <div class="flex flex-row flex-wrap text-lg font-bold divide-border gap-2 cursor-pointer">
         {frontmatter.tags.map((tag: string) => 
           <span class="inline-flex items-center rounded-full bg-purple-500/20 px-3 py-2 text-sm font-medium text-purple-400 ring-1 ring-inset ring-purple-400/20">#{tag}</span>
         )}
