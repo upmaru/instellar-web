@@ -6,7 +6,7 @@ const { title, description, cover, url } = Astro.props
 
 <html lang="en">
 	<head>
-	<meta charset="utf-8" />
+	  <meta charset="utf-8" />
 	  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 	  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -31,8 +31,8 @@ const { title, description, cover, url } = Astro.props
 		<title>{title || "Instellar"}</title>
 	</head>
 	<body class="bg-slate-900">
-    <header class="bg-slate-900">
-      <MainNav pathName={Astro.request.url} client:load />
+    <header>
+      <MainNav pathName={Astro.request.url} width="max-w-7xl" client:load />
     </header>
     <main>
       <slot />
