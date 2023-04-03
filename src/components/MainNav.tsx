@@ -15,7 +15,7 @@ const MainNav: FunctionComponent<MainNavProps> = (props) => {
   const links = [
     { href: '/', text: 'Home' },
     { href: '/blog/', text: 'Blog' },
-    { href: '/docs/', text: 'Docs' },
+    { href: '/docs/getting-started', text: 'Docs' },
     { href: 'https://status.instellar.app', target: '_blank', text: 'Status' }
   ]
 

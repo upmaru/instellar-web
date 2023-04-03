@@ -1,8 +1,24 @@
 ---
 import MainNav from '../components/MainNav'
+import Hero from '../components/docs/Hero'
+import { getCollection } from 'astro:content'
+import _ from 'lodash'
+
 const { title, description, cover, url } = Astro.props
+
+const docsEntries = await getCollection('docs')
+const groupedEntries = _.groupBy(docsEntries, entry => entry.data.section)
+const groups = Object.keys(groupedEntries)
+
+const navigation = groups.map(group => ({
+  title: group,
+  links: groupedEntries[group].map(entry => ({
+    title: entry.data.link, href: `/docs/${entry.slug}`
+  }))
+}))
+
 ---
-<html lang="en">
+<html lang="en" class="dark">
   <head>
 	  <meta charset="utf-8" />
 	  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -11,6 +27,7 @@ const { title, description, cover, url } = Astro.props
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
     <link rel="manifest" href="/site.webmanifest">
     <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
     <meta name="msapplication-TileColor" content="#da532c">
     <meta name="theme-color" content="#0f172a">
 	  <meta name="viewport" content="width=device-width" />
@@ -28,12 +45,49 @@ const { title, description, cover, url } = Astro.props
     <script defer data-domain="instellar.app" src="https://plausible.io/js/script.js"></script>
 		<title>{title || "Instellar Documentation"}</title>
 	</head>
-  <body class="bg-slate-900">
+  <body class="bg-slate-900 font-sans">
     <header>
-      <MainNav pathName={Astro.request.url} width="max-w-full" client:load />
+      <MainNav pathName={Astro.request.url} width="max-w-8xl" client:load />
     </header>
-    <div class="overflow-hidden bg-slate-900 dark:-mb-32 dark:mt-[-4.5rem] dark:pb-32 dark:pt-[4.5rem] dark:lg:mt-[-4.75rem] dark:lg:pt-[4.75rem]">
-      
+    {Astro.url.pathname.includes("/docs/getting-started") ? <Hero /> : null}
+    <div class="relative mx-auto flex max-w-8xl justify-center sm:px-2 lg:px-8 xl:px-12">
+      <div class="hidden lg:relative lg:block lg:flex-none">
+        <div class="absolute bottom-0 right-0 top-16 hidden h-12 w-px bg-gradient-to-t from-slate-800 dark:block"></div>
+        <div class="absolute bottom-0 right-0 top-28 hidden w-px bg-slate-800 dark:block"></div>
+        <div class="sticky top-[4.5rem] -ml-0.5 h-[calc(100vh-4.5rem)] overflow-y-auto overflow-x-hidden py-16 pl-0.5">
+          <nav class="text-base lg:text-sm w-64 pr-8 xl:w-72 xl:pr-16">
+            <ul class="space-y-9">
+              {navigation.map((section) => (
+                <li>
+                  <h2 class="font-display font-medium text-slate-900 dark:text-white">
+                    {section.title}
+                  </h2>  
+                  <ul
+                    role="list"
+                    class="mt-2 space-y-2 border-l-2 border-slate-100 dark:border-slate-800 lg:mt-4 lg:space-y-4 lg:border-slate-200"
+                  >
+                    {section.links.map((link: {href: string, title: string}) => (
+                      <li class="relative">
+                        <a
+                          href={link.href}
+                          class={`block w-full pl-3.5 before:pointer-events-none before:absolute before:-left-1 before:top-1/2 before:h-1.5 before:w-1.5 before:-translate-y-1/2 before:rounded-full ${link.href === Astro.url.pathname ? 'font-semibold text-purple-400 before:bg-purple-400' : 'text-slate-500 before:hidden before:bg-slate-300 hover:text-slate-600 hover:before:block dark:text-slate-400 dark:before:bg-slate-700 dark:hover:text-slate-300'}`}
+                          >
+                            {link.title}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </div>
+      </div>
+      <div class="min-w-0 max-w-2xl flex-auto px-4 py-16 lg:max-w-none lg:pl-8 lg:pr-0 xl:px-16">
+        <slot />
+      </div>
+      <div class="hidden xl:sticky xl:top-[4.5rem] xl:-mr-6 xl:block xl:h-[calc(100vh-4.5rem)] xl:flex-none xl:overflow-y-auto xl:py-16 xl:pr-6">
+      </div>
     </div>
   </body>
 </html>
