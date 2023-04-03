@@ -6,13 +6,14 @@ const { title, description, cover, url } = Astro.props
 
 <html lang="en">
 	<head>
-	<meta charset="utf-8" />
+	  <meta charset="utf-8" />
 	  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 	  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
     <link rel="manifest" href="/site.webmanifest">
     <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
     <meta name="msapplication-TileColor" content="#da532c">
     <meta name="theme-color" content="#0f172a">
 	  <meta name="viewport" content="width=device-width" />
@@ -30,9 +31,9 @@ const { title, description, cover, url } = Astro.props
     <script defer data-domain="instellar.app" src="https://plausible.io/js/script.js"></script>
 		<title>{title || "Instellar"}</title>
 	</head>
-	<body class="bg-slate-900">
-    <header class="bg-slate-900">
-      <MainNav pathName={Astro.request.url} client:load />
+	<body class="bg-slate-900 font-sans">
+    <header>
+      <MainNav pathName={Astro.request.url} width="max-w-7xl" client:load />
     </header>
     <main>
       <slot />
@@ -46,6 +47,10 @@ const { title, description, cover, url } = Astro.props
           
           <div class="pb-6">
             <a href="/blog" class="text-sm leading-6 text-slate-300 hover:text-slate-200">Blog</a>
+          </div>
+
+          <div class="pb-6">
+            <a href="/docs" class="text-sm leading-6 text-slate-300 hover:text-slate-200">Docs</a>
           </div>
           
           <div class="pb-6">

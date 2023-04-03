@@ -5,21 +5,23 @@ import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 
 interface MainNavProps {
   pathName: string
+  width: string
 }
 
 const MainNav: FunctionComponent<MainNavProps> = (props) => {
-  const { pathName } = props
+  const { pathName, width } = props
   const pathname = new URL(pathName).pathname
 
   const links = [
     { href: '/', text: 'Home' },
     { href: '/blog/', text: 'Blog' },
+    { href: '/docs/getting-started', text: 'Docs' },
     { href: 'https://status.instellar.app', target: '_blank', text: 'Status' }
   ]
 
   return (
     <Popover>
-      <nav className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
+      <nav className={`mx-auto flex ${width} items-center justify-between p-6 lg:px-8`} aria-label="Global">
         <a href="/" className="-m-1.5 p-1.5">
           <span className="sr-only">Instellar.app</span>
           <img className="h-8 w-auto" src="/instellar-logo.png" alt="" />
