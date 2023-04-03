@@ -6,13 +6,8 @@ import tailwind from "@astrojs/tailwind";
 import react from "@astrojs/react";
 
 // https://astro.build/config
-
-// https://astro.build/config
-import markdoc from "@astrojs/markdoc";
-
-// https://astro.build/config
 export default defineConfig({
-  integrations: [tailwind(), react(), mdx(), markdoc()],
+  integrations: [tailwind(), react(), mdx()],
   markdown: {
     syntaxHighlight: 'shiki'
   }
