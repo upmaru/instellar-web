@@ -1,6 +1,6 @@
 ---
 layout: "../../layouts/Blog.astro"
-id: 5
+id: 6
 title: "3.2.0 Upcoming Changes"
 pubDate: 2023-04-07
 description: " This post highlights some notable things that will change on version 3.2.0 of our platform."
