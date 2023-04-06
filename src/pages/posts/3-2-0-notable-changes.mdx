@@ -1,0 +1,81 @@
+---
+layout: "../../layouts/Blog.astro"
+id: 6
+title: "3.2.0 Notable Changes"
+pubDate: 2023-04-07
+description: "This post highlights some notable things that will change in version 3.2.0 of our platform."
+author:
+  avatar: /authors/zack-siri.jpeg
+  name: "Zack Siri"
+  position: "Founder / CEO"
+tags: ["changelog"]
+image:
+  url: /posts/3-2-0-notable-changes/cover.jpg
+  alt: Cover image for LXD password and token Security
+---
+
+# 3.2.0 Notable Changes
+
+We continue to work towards shipping improvements to our platform. The latest iteration brings some new features and changes to the way our platform operates.
+
+This post will highlight some of the things coming up in 3.2.0 release.
+
+## Scheduling
+
+We're planning on upgrading our platform on the 11th of April 2023 between 6:30pm to 7:00pm GMT +7. You can check the maintenance schduling on our status page.
+
+Now that we have that out of the way let's get to the fun stuff.
+
+## Cluster Page
+
+In 3.1.0 if you clicked on a cluster you would just be taken to a placeholder page with nothing on it. In 3.2.0 however you'll notice that it's been filled out.
+
+![cluster detail page](/posts/3-2-0-notable-changes/cluster-detail.jpg)
+
+The cluster detail page displays the list of nodes in a given cluster. On each node you'll also be able to see which instances are running on them. This should give you a bird's eye-view of what's happening inside your cluster.
+
+### Health Check
+
+Cluster health is an important part of instellar's operations. We have real-time monitoring on all clusters as soon as it's added to instellar. We do this to ensure deployments don't fail we need to know how the cluster is doing. If a deployment comes in and the cluster is unhealthy, instellar knows to not deploy to it.
+
+Other parts of the UI are now also aware of the cluster health. For example, if a cluster is unhealthy, the instance page and installation page will make sure users do not accidentally issue commands onto the cluster. It will prompt the user to make sure the cluster is healthy before resuming any operations.
+
+![instance check cluster](/posts/3-2-0-notable-changes/instance-check-cluster.jpg)
+
+![installation check cluster](/posts/3-2-0-notable-changes/installation-check-cluster.jpg)
+
+We believe this will help improve the robustness of the instellar platform.
+
+### Uplink
+
+We have [a demo](/posts/instellar-product-demo) of this in our product demo post, where we outline some of the benefits of uplink. If you already have a cluster up and running and deploying applications you do not need to worry about uplink for now.
+
+Uplink is an optional module. Currently uplink is still in development and testing phase. Once it stabilizes we will do an official announcement of it with a lot more documentatin an detail explaining what it is, how it works, and why you should use uplink for all your clusters moving forward.
+
+## LXD Projects
+
+Instellar will now make use of LXD projects when managing containers. LXD projects provide isolation for containers. Previously all containers were deployed to the `default` project in LXD. If you run `lxc list` you will no longer see a list of all the containers running.
+
+```shell
++------+-------+------+------+------+-----------+----------+
+| NAME | STATE | IPV4 | IPV6 | TYPE | SNAPSHOTS | LOCATION |
++------+-------+------+------+------+-----------+----------+
+```
+
+
+With the new change you will need to call `lxc list --all-projects` if you wish to see all the containers running on your cluster.
+
+```shell
++---------------------+--------------------+---------+----------------------+------+-----------+-----------+--------------------+
+|       PROJECT       |        NAME        |  STATE  |         IPV4         | IPV6 |   TYPE    | SNAPSHOTS |      LOCATION      |
++---------------------+--------------------+---------+----------------------+------+-----------+-----------+--------------------+
+| upmaru-stage.rdio   | rdio-warden-01     | RUNNING | 240.4.151.8 (eth0)   |      | CONTAINER | 0         | warden-terminal-01 |
++---------------------+--------------------+---------+----------------------+------+-----------+-----------+--------------------+
+| upmaru-stage.uplink | uplink-744b0e89-01 | RUNNING | 240.4.151.216 (eth0) |      | CONTAINER | 0         | warden-terminal-01 |
++---------------------+--------------------+---------+----------------------+------+-----------+-----------+--------------------+
+```
+
+Existing containers will have no impact, this means instellar will only upgrade your instances to using projects when bootstrapping new instances. If you however wish to try out this new behaviour you can manually deactivate an instance and execute bootstrap. Instellar will setup a new project for the instance automatically.
+
+Why are we doing this? In short there are some features we're planning in the future that will rely on utilizing LXD projects. We want to make sure moving forward isolating instances under LXD projects is the default behaviour.
+
