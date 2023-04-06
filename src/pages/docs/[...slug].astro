@@ -1,7 +1,21 @@
 ---
 import Docs from '../../layouts/Docs.astro'
-import { getCollection } from 'astro:content'
+import { getCollection, getEntryBySlug } from 'astro:content'
 
+// Server side rendering
+// const { slug } = Astro.params
+
+// if (slug === undefined) {
+//   return Astro.redirect("/docs/getting-started")
+// }
+
+// const entry = await getEntryBySlug("docs", slug)
+
+// if (entry === undefined) {
+//   return Astro.redirect("/404")
+// }
+
+// Static Rendering
 export async function getStaticPaths() {
   const docsEntries = await getCollection('docs')
   
@@ -11,6 +25,7 @@ export async function getStaticPaths() {
 }
 
 const { entry } = Astro.props
+
 const { Content } = await entry.render()
 ---
 
