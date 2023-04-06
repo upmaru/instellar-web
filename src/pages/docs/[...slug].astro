@@ -1,19 +1,16 @@
 ---
 import Docs from '../../layouts/Docs.astro'
-import { getEntryBySlug } from 'astro:content'
+import { getCollection } from 'astro:content'
 
-const { slug } = Astro.params
-
-if (slug === undefined) {
-  return Astro.redirect("/docs/getting-started")
+export async function getStaticPaths() {
+  const docsEntries = await getCollection('docs')
+  
+  return docsEntries.map(entry => ({
+    params: { slug: entry.slug }, props: { entry },
+  }))
 }
 
-const entry = await getEntryBySlug("docs", slug)
-
-if (entry === undefined) {
-  return Astro.redirect("/404")
-}
-
+const { entry } = Astro.props
 const { Content } = await entry.render()
 ---
 
