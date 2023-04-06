@@ -30,7 +30,7 @@ The cluster detail page displays the list of nodes in a given cluster. On each n
 
 ### Health Check
 
-Cluster health is an important part of instellar's operations. We have real-time monitoring on all clusters as soon as it's added to instellar. We do this to ensure deployments don't fail we need to know how the cluster is doing. If a deployment comes in and the cluster is unhealthy, instellar knows to not deploy to it.
+Cluster health is an important part of instellar's operations. We have real-time monitoring on all clusters as soon as it's added to instellar. If a deployment is created and the cluster is unhealthy, instellar knows to not deploy to it.
 
 Other parts of the UI are now also aware of the cluster health. For example, if a cluster is unhealthy, the instance page and installation page will make sure users do not accidentally issue commands onto the cluster. It will prompt the user to make sure the cluster is healthy before resuming any operations.
 
