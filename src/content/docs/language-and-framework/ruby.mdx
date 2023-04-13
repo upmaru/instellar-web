@@ -1,0 +1,218 @@
+---
+id: 2
+link: Ruby
+title: Deploy Ruby based apps
+description: This page takes you through setting up instellar on a Ruby on Rails application
+section: Language and Framework
+---
+
+This page takes you through setting up instellar on a Ruby on Rails application. You will learn how to configure your application to run on your PaaS
+
+## Example Application
+
+We've created an [example application](https://github.com/upmaru-stage/locomo) incase you wish to skip and go straight to the source code.
+
+import { Callout } from '@components/Callout'
+
+<Callout title="A note on INSTELLAR_ENDPOINT" type="warning">
+The examples in the codebase we referenced the `.github/workflows/deployment.yml` file will contain a value for `INSTELLAR_ENDPOINT` this is only necessary in those repositories since they're deploying to our staging environment. For our customers we recommend omitting this value.
+</Callout>
+
+## instellar.yml
+
+This file is used to describe to PAKman how to build your application. The following is taken from a Ruby on Rails based application. This configuration will change depending on your application. This file will work with a freshly generated rails app.
+
+### Dependencies
+
+The dependencies section enables you to define OS packages for your application. This list may grow if your application depends on more OS level packages.
+
+```yaml
+dependencies:
+  build:
+    - ruby
+    - ruby-bundler
+    - ruby-dev
+    - ruby-tzinfo
+    - libpq-dev
+  runtime:
+    - bash
+    - curl
+    - jq
+    - ca-certificates
+    - s6
+    - ruby
+    - ruby-bundler
+    - ruby-tzinfo
+    - ruby-rdoc
+    - libpq
+    - locomo-openrc
+```
+
+### Choosing a Stack
+
+We're using alpine as the base image for all the containers that run the applications. We recommend using `alpine/3.17` for all applications. However please check the [alpine packages](https://pkgs.alpinelinux.org/packages) listing to see compatibility for your language and framework.
+
+You can choose from the following:
+
+- alpine/edge
+- alpine/3.17
+- alpine/3.16
+- alpine/3.15
+
+```yaml
+stack: alpine/3.17
+```
+
+### Build
+
+The below section tells PAKman how to actually build your application. In this case we're just setting the bundle config for deployment, running bundle install and compile assets. As you can see it's pretty straight forward.
+
+```yaml
+build:
+  destinations: 
+    - '*'
+    - .bundle
+  command: |
+    bundle config set deployment 'true'
+    bundle config set without 'development test'
+    
+    bundle install
+    
+    bundle exec rails assets:precompile
+```
+
+### Run
+
+The below section explains how your application is run. You can see we have the ability to define `commands`. These are commands you wish to run like migrations or seeds if you have them.
+
+The `services` section enables you to define how your application is run. How does it start? How does it stop? In this case we're using the kill pid. By default rails server creates pid file in the `tmp/pids` directory.
+
+If you want to run workers you can define that as a separate service offered by your application. In this case the resulting worker will be started with `bundle exec sidekiq -C config/sidekiq.yml`
+
+```yaml
+run: 
+  name: locomo
+  commands: 
+  - name: migrate
+    binary: rails
+    call: db:migrate
+  services:
+  - name: web
+    binary: rails
+    start: 
+      call: server
+    stop:
+      kill: true
+      pid_path: tmp/pids/server.pid
+  - name: worker
+    binary: bundle
+    start:
+      call: 'exec sidekiq -C config/sidekiq.yml'
+```
+
+### Hooks
+
+These are the lifecycle of the alpine packages. You can define their behaviour. Generally we don't expect this to change from app to app. However feel free to adjust as required.
+
+In this case `rc-update add locomo` will add our `locomo` app to the default run. This will ensure our app automatically starts when the container is restarted (incase it needs to restart).
+
+The `rc-service locomo migrate` will run the migration. In this case it will run after the package is installed and after the upgrade.
+
+- `rc-service locomo start` will start the application
+- `rc-service locomo stop` will simply stop the application
+
+Your application will be built into openrc and supervised by the [`s6` supervisor suite](https://github.com/skarnet/s6).
+
+```yaml
+hook:
+  post-install: |
+    rc-update add locomo
+    rc-service locomo migrate
+  pre-upgrade: |
+    rc-service locomo stop
+  post-upgrade: |
+    rc-service locomo migrate
+    rc-service locomo start
+  post-deinstall: |
+    rc-service locomo stop
+    rc-update locomo rdio
+```
+
+## Putting it Together
+
+The final file looks like the following:
+
+```yaml
+dependencies:
+  build:
+    - ruby
+    - ruby-bundler
+    - ruby-dev
+    - ruby-tzinfo
+    - libpq-dev
+  runtime:
+    - bash
+    - curl
+    - jq
+    - ca-certificates
+    - s6
+    - ruby
+    - ruby-bundler
+    - ruby-tzinfo
+    - ruby-rdoc
+    - libpq
+    - locomo-openrc
+
+stack: alpine/3.17
+
+build:
+  destinations: 
+    - '*'
+    - .bundle
+  command: |
+    bundle config set deployment 'true'
+    bundle config set without 'development test'
+    
+    bundle install
+    
+    bundle exec rails assets:precompile
+
+run: 
+  name: locomo
+  commands: 
+  - name: migrate
+    binary: rails
+    call: db:migrate
+  services:
+  - name: web
+    binary: rails
+    start: 
+      call: server
+    stop:
+      kill: true
+      pid_path: tmp/pids/server.pid
+  - name: worker
+    binary: bundle
+    start:
+      call: 'exec sidekiq -C config/sidekiq.yml'
+
+hook:
+  post-install: |
+    rc-update add locomo
+    rc-service locomo migrate
+
+  pre-upgrade: |
+    rc-service locomo stop
+
+  post-upgrade: |
+    rc-service locomo migrate
+    rc-service locomo start
+
+  post-deinstall: |
+    rc-service locomo stop
+    rc-update locomo rdio
+```
+
+
+
+

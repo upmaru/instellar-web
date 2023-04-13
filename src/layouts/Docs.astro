@@ -13,7 +13,7 @@ const groups = Object.keys(groupedEntries)
 const navigation = groups.map(group => ({
   title: group,
   links: groupedEntries[group].map(entry => ({
-    title: entry.data.link, href: `/docs/${entry.slug}`
+    id: entry.data.id, title: entry.data.link, href: `/docs/${entry.slug}`
   }))
 }))
 
@@ -66,7 +66,7 @@ const navigation = groups.map(group => ({
                     role="list"
                     class="mt-2 space-y-2 border-l-2 border-slate-100 dark:border-slate-800 lg:mt-4 lg:space-y-4 lg:border-slate-200"
                   >
-                    {section.links.map((link: {href: string, title: string}) => (
+                    {section.links.sort((a, b) => a.id - b.id).map((link: {href: string, title: string}) => (
                       <li class="relative">
                         <a
                           href={link.href}
@@ -89,5 +89,20 @@ const navigation = groups.map(group => ({
       <div class="hidden xl:sticky xl:top-[4.5rem] xl:-mr-6 xl:block xl:h-[calc(100vh-4.5rem)] xl:flex-none xl:overflow-y-auto xl:py-16 xl:pr-6">
       </div>
     </div>
+    <script>
+      // @ts-ignore
+      window.$plain = window.$plain || [];
+      // @ts-ignore
+      let plain;
+      // @ts-ignore
+      typeof plain === 'undefined' && (plain = function () { $plain.push(arguments); });
+      // @ts-ignore
+      plain("init", {
+        appKey: "appKey_uk_01GVF02TAKK56DRGNPGAJ16N88"
+      });
+      // @ts-ignore
+      plain('set-theme', {brandColor: '#6b21a8'});
+    </script>
+    <script async src="https://customer-chat.cdn-plain.com/latest/customerChat.js"></script>
   </body>
 </html>

@@ -1,0 +1,19 @@
+---
+id: 3
+link: Python
+title: Deploy Python based apps
+description: This page takes you through setting up instellar on a Django application
+section: Language and Framework
+---
+
+This page takes you through setting up instellar for a Django application. You will learn how to configure your application to run on your PaaS
+
+## Example Application
+
+We've created an [example application](https://github.com/upmaru-stage/monty) in case you wish to skip staright to the source code.
+
+import { Callout } from '@components/Callout'
+
+<Callout title="A note on INSTELLAR_ENDPOINT" type="warning">
+The examples in the codebase we referenced the `.github/workflows/deployment.yml` file will contain a value for `INSTELLAR_ENDPOINT` this is only necessary in those repositories since they're deploying to our staging environment. For our customers we recommend omitting this value.
+</Callout>

@@ -1,0 +1,19 @@
+---
+import { getCollection } from 'astro:content'
+
+const docs = await getCollection('docs')
+const languages = docs.filter(doc => doc.slug.includes('language-and-framework'))
+
+const entries = languages.map(entry => ({
+  id: entry.data.id, title: entry.data.link, href: `/docs/${entry.slug}/`
+}))
+---
+
+<ul>
+  {entries.map((entry) => 
+    <li>
+      <a href={entry.href}>
+        {entry.title}
+      </a>
+    </li>)}
+</ul>

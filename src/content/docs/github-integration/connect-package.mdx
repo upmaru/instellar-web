@@ -1,0 +1,27 @@
+---
+id: 2
+link: Connect Package
+title: Connect Instellar package to Github repository
+section: Github Integration
+---
+
+import { Callout } from '@components/Callout'
+
+<Callout title="Pre-requisite">
+This page assumes that you've already created some packages under your instellar organization. If you haven't already done that we suggest you do that first.
+</Callout>
+
+If you're ready to move forward, click on one of your packages. You should see something like this.
+
+![new package](/docs/instellar/new-package.png)
+
+Go ahead and click `Configure` this will display a list of github repositories you can connect to your package.
+
+Simply click `Connect` and you're done!
+
+![connectable repository](/docs/instellar/connectable-repository.png)
+
+Once connected you will see the repository status on your package as `Active`
+
+Instellar will now configure your repository for deployment! Next you will need to configure your [deployment workflow](/docs/github-integration/deployment/) and `instellar.yml` file.
+

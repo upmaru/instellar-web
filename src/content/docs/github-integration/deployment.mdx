@@ -1,0 +1,205 @@
+---
+id: 3
+link: Deployment
+title: Configure deployment workflow on your repository
+section: Github Integration
+---
+
+import { Callout } from '@components/Callout'
+
+<Callout title="Pre-requisite">
+Before doing this please be sure to connect the package in instellar.app to your github repository.
+</Callout>
+
+Pakman is the github action responsible for producting apk files which can be distributed by instellar.app. This file should be language / framework agnostic.
+
+## deployment.yml
+
+In `.github/workflows/deployment.yml` add the following content.
+
+Below we're simply setting the name.
+
+```yaml
+name: 'Deployment'
+```
+
+### On Event
+
+The section below defines when github action should run the deployment action. In this case we're telling it to build on pushing the branch `main`. You can add more branches to the list. You can even use wildcard patterns.
+
+```yaml
+on:
+  push:
+    branches:
+      - main
+```
+
+Here is some more exmaples for the `on` section.
+
+```yaml
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - 'feature/*'
+```
+
+### Job Definition
+
+The section below defines the deployment `job`. The build will happen inside a docker container defined by [pakman github action](https://github.com/upmaru/pakman). We're telling github action that we want to run our action inside a ubuntu 20.04 runtime. This is the github officially recommended for linux build environment.
+
+```yaml
+jobs:
+  build_and_deploy:
+    name: Build and Deploy
+    runs-on: ubuntu-20.04
+    steps:
+```
+
+#### Checkout
+
+The first step is the github action will checkout our code in the github runner. We're simply using the official action provided by github.
+
+```yaml
+      - name: 'Checkout'
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.workflow_run.head_branch }}
+          fetch-depth: 0
+```
+
+#### Pakman Setup
+
+Everything here on will use the [pakman github action](https://github.com/upmaru/pakman)
+
+You can choose which alpine version you use to build your application. We recommend choosing the alpine version that has the matching dependency for your app. You can search through the [alpine packages](https://pkgs.alpinelinux.org/packages) listing to see which version of alpine matches which version of your programming language.
+
+Here is a list of tags you can use.
+
+- `upmaru/pakman@alpine-edge-7.1`
+- `upmaru/pakman@alpine-3.17-7.1`
+- `upmaru/pakman@alpine-3.16-7.1`
+- `upmaru/pakman@alpine-3.15-7.1`
+- `upmaru/pakman@alpine-3.14-7.1`
+
+
+The below setup will simply setup the build environment and install all the dependencies required for the actual build.
+
+```yaml
+      - name: 'Pakman'
+        uses: upmaru/pakman@alpine-3.17-7.1
+        with:
+          command: 'bootstrap'
+        env:
+          ABUILD_PRIVATE_KEY: ${{secrets.ABUILD_PRIVATE_KEY}}
+          ABUILD_PUBLIC_KEY: ${{secrets.ABUILD_PUBLIC_KEY}}
+```
+
+#### Building the Alpine package
+
+This step executes the build script. This is where your code is built into an alpine package.
+
+```yaml
+      - name: 'Build APK'
+        uses: upmaru/pakman@alpine-3.17-7.1
+        with:
+          entrypoint: /var/lib/pakman/bin/build.sh
+```
+
+#### Archiving the Artifacts
+
+This step takes the built artifacts from the previous step and packages it up into a zip file.
+
+```yaml
+      - name: 'Archive'
+        uses: upmaru/pakman@alpine-3.17-7.1
+        with:
+          entrypoint: /var/lib/pakman/bin/archive.sh
+```
+
+#### Creating Deployment
+
+This is the final step. It takes the compressed `packages.zip` and delivers it to the instellar platform.
+
+```yaml
+      - name: 'Create Deployment'
+        uses: upmaru/pakman@alpine-3.17-7.1
+        with:
+          command: 'create_deployment'
+          archive: 'packages.zip'
+        env:
+          WORKFLOW_REF: ${{ github.ref }}
+          WORKFLOW_SHA: ${{ github.sha }}
+          INSTELLAR_PACKAGE_TOKEN: ${{secrets.INSTELLAR_PACKAGE_TOKEN}}
+          INSTELLAR_AUTH_TOKEN: ${{secrets.INSTELLAR_AUTH_TOKEN}}
+```
+
+If you're wondering how the `${{secrets.VAR}}` tag works. Essentially when you connected your package to the github repository. Instellar already setup all the secrets for you automatically.
+
+## Putting it Together
+
+The final output should look something like the following:
+
+```yaml
+name: 'Deployment'
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build_and_deploy:
+    name: Build and Deploy
+    runs-on: ubuntu-20.04
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.workflow_run.head_branch }}
+          fetch-depth: 0
+
+      - name: 'Pakman'
+        uses: upmaru/pakman@alpine-3.17-7.1
+        with:
+          command: 'bootstrap'
+        env:
+          ABUILD_PRIVATE_KEY: ${{secrets.ABUILD_PRIVATE_KEY}}
+          ABUILD_PUBLIC_KEY: ${{secrets.ABUILD_PUBLIC_KEY}}
+
+      - name: 'Build APK'
+        uses: upmaru/pakman@alpine-3.17-7.1
+        with:
+          entrypoint: /var/lib/pakman/bin/build.sh
+
+      - name: 'Archive'
+        uses: upmaru/pakman@alpine-3.17-7.1
+        with:
+          entrypoint: /var/lib/pakman/bin/archive.sh
+
+      - name: 'Create Deployment'
+        uses: upmaru/pakman@alpine-3.17-7.1
+        with:
+          command: 'create_deployment'
+          archive: 'packages.zip'
+        env:
+          WORKFLOW_REF: ${{ github.ref }}
+          WORKFLOW_SHA: ${{ github.sha }}
+          INSTELLAR_PACKAGE_TOKEN: ${{secrets.INSTELLAR_PACKAGE_TOKEN}}
+          INSTELLAR_AUTH_TOKEN: ${{secrets.INSTELLAR_AUTH_TOKEN}}
+```
+
+In this example we're assuming a single github action, where we're just pushing to deploy the code without running CI. If you wish to use a preceding CI step where the deployment is conditional depending on the result of continuous integration please see the [conditional deployment](/docs/github-integration/conditional-deployment/) page.
+
+---
+
+## Setup instellar.yml
+
+Once you've added this file to your repository you will also need to add the `instellar.yml` file to your repository. Please see the language / framework you are using.
+
+import Languages from '@components/docs/Languages.astro'
+
+<Languages />
+
+
