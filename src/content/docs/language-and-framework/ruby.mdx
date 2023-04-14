@@ -50,7 +50,7 @@ dependencies:
 
 ### Choosing a Stack
 
-We're using alpine as the base image for all the containers that run the applications. We recommend using `alpine/3.17` for all applications. However please check the [alpine packages](https://pkgs.alpinelinux.org/packages) listing to see compatibility for your language and framework.
+We're using alpine as the base image for all the containers that run the applications. We recommend using `alpine/3.17` for all applications. However please check the [alpine packages](https://pkgs.alpinelinux.org/packages) listing to see compatibility for your language and framework. In this case alpine/3.17 will run ruby `3.1.4`.
 
 You can choose from the following:
 
@@ -212,7 +212,3 @@ hook:
     rc-service locomo stop
     rc-update locomo rdio
 ```
-
-
-
-

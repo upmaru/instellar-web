@@ -5,3 +5,224 @@ title: Setup instellar on your elixir based apps
 description: This page takes you through setting up instellar on a Phoenix application
 section: Language and Framework
 ---
+
+This page takes you through setting up instellar for a Phoenix application. You will learn how to configure your application to run on your PaaS
+
+## Example Application
+
+We've created an [example application](https://github.com/upmaru-stage/rdio) in case you wish to skip straight to the source code.
+
+import { Callout } from '@components/Callout'
+
+<Callout title="A note on INSTELLAR_ENDPOINT" type="warning">
+The examples in the codebase we referenced the `.github/workflows/deployment.yml` file will contain a value for `INSTELLAR_ENDPOINT` this is only necessary in those repositories since they're deploying to our staging environment. For our customers we recommend omitting this value.
+</Callout>
+
+The phoenix application is built using the default `mix release`.
+
+## mix.exs
+
+We'll need to add the release config to our `mix.exs`. Under the `project` function, add the following:
+
+```elixir
+releases: [
+  rdio: [
+    include_executables_for: [:unix]
+  ]
+]
+```
+
+## instellar.yml
+
+This file is used to describe to PAKman how to build your application. The following is taken from a Phoenix based application. This configuration will change depending on your application. This file will work with a freshly generated phoenix app.
+
+## Dependencies
+
+Let's take a look at our `dependencies` section. You'll notice that we're enabling `trace: true` in our dependencies. This will enable dependency tracing, which means if we miss some dependency in our `runtime` section the build tool will trace the dependency and automatically include it in our package. Super awesome!
+
+We're including `npm` in the `build` section here because we need to build assets.
+
+```yaml
+dependencies:
+  trace: true
+  build:
+    - elixir
+    - npm
+  runtime:
+    - bash
+    - curl
+    - s6
+    - jq
+    - openssl 
+    - libgcc 
+    - libstdc++ 
+    - ncurses-libs
+    - ca-certificates
+    - rdio-openrc
+```
+
+### Choosing a Stack
+
+We're using alpine as the base image for all the containers that run the applications. We recommend using `alpine/3.17` for all applications. However please check the [alpine packages](https://pkgs.alpinelinux.org/packages) listing to see compatibility for your language and framework. In this case alpine/3.17 will run elixir `1.14.2`.
+
+You can choose from the following:
+
+- alpine/edge
+- alpine/3.17
+- alpine/3.16
+- alpine/3.15
+
+```yaml
+stack: alpine/3.17
+```
+
+### Build
+
+The below section tells PAKman how to actually build your application. We're exporting the environment to `MIX_ENV=prod` to tell `mix release` that we're building for production. 
+
+We then install all the dependencies by setting up `hex` and `rebar`. Next we run `npm install` with the `--prefix` option to install everything into the `/assets` directory.
+
+Next we run `mix assets.deploy` to build the assets. Finally we run `mix release` which builds our application into the `_build/prod/rel/rdio` directory.
+
+```yaml
+build:
+  destinations: 
+    - '_build/prod/rel/rdio/*'
+  command: |
+    export MIX_ENV=prod
+
+    mix local.hex --force
+    mix local.rebar --force
+    mix do deps.get --only prod
+
+    npm --prefix ./assets install ./assets
+
+    mix assets.deploy
+
+    mix release
+```
+
+### Run
+
+The below section explains how your application is run. In this case we're defining the `commands` to be able to run migration for our app. The `services` section is used to define our `web` service. The default elixir release will allow us to call the binary of our app with `start` and `stop` command to start and stop the application.
+
+If you use the default mix release, your configuration for the run section should look mostly the same.
+
+```yaml
+run: 
+  name: rdio
+  commands:
+  - name: migrate
+    binary: rdio
+    call: 'eval Rdio.Release.Tasks.migrate'
+  services:
+  - name: web
+    binary: rdio
+    start:
+      call: start
+    stop:
+      call: stop
+```
+
+### Hooks
+
+These are the lifecycle of the alpine packages. You can define their behaviour. Generally we don't expect this to change from app to app. However feel free to adjust as required.
+
+In this case `rc-update add rdio` will add our `rdio` app to the default run. This will ensure our app automatically starts when the container is restarted (incase it needs to restart).
+
+The `rc-service rdio migrate` will run the migration. In this case it will run after the package is installed and after the upgrade.
+
+- `rc-service rdio start` will start the application
+- `rc-service rdio stop` will simply stop the application
+
+Your application will be built into openrc and supervised by the [`s6` supervisor suite](https://github.com/skarnet/s6).
+
+
+```yaml
+hook:
+  post-install: |
+    rc-update add rdio
+    rc-service rdio migrate
+
+  pre-upgrade: |
+    rc-service rdio stop
+
+  post-upgrade: |
+    rc-service rdio migrate
+    rc-service rdio start
+
+  post-deinstall: |
+    rc-service rdio stop
+    rc-update del rdio
+```
+
+## Putting it together
+
+The final file looks like the following:
+
+```yaml
+dependencies:
+  trace: true
+  build:
+    - elixir
+    - npm
+  runtime:
+    - bash
+    - curl
+    - s6
+    - jq
+    - openssl 
+    - libgcc 
+    - libstdc++ 
+    - ncurses-libs
+    - ca-certificates
+    - rdio-openrc
+
+stack: alpine/3.17
+
+build:
+  destinations: 
+    - '_build/prod/rel/rdio/*'
+  command: |
+    export MIX_ENV=prod
+
+    mix local.hex --force
+    mix local.rebar --force
+    mix do deps.get --only prod
+
+    npm --prefix ./assets install ./assets
+
+    mix assets.deploy
+
+    mix release
+
+run: 
+  name: rdio
+  commands:
+  - name: migrate
+    binary: rdio
+    call: 'eval Rdio.Release.Tasks.migrate'
+  services:
+  - name: web
+    binary: rdio
+    start:
+      call: start
+    stop:
+      call: stop
+
+hook:
+  post-install: |
+    rc-update add rdio
+    rc-service rdio migrate
+
+  pre-upgrade: |
+    rc-service rdio stop
+
+  post-upgrade: |
+    rc-service rdio migrate
+    rc-service rdio start
+
+  post-deinstall: |
+    rc-service rdio stop
+    rc-update del rdio
+```
