@@ -17,3 +17,225 @@ import { Callout } from '@components/Callout'
 <Callout title="A note on INSTELLAR_ENDPOINT" type="warning">
 The examples in the codebase we referenced the `.github/workflows/deployment.yml` file will contain a value for `INSTELLAR_ENDPOINT` this is only necessary in those repositories since they're deploying to our staging environment. For our customers we recommend omitting this value.
 </Callout>
+
+In this example we build python into a zipapp using a tool called shiv. It adheres to the [PEP 441](https://peps.python.org/pep-0441/)
+
+## main.py
+
+In our example application you will notice a file in the `monty` directory. It looks something like this. You will need a variation of this in your app. In our example we're running the app using gunicorn. We also enable the `migrate` command.
+
+```python
+import os
+import sys
+
+import django
+
+import gunicorn.app.wsgiapp as wsgi
+from django.core import management
+
+
+def run():
+    # setup django
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "monty.settings.development")
+    django.setup()
+
+    match sys.argv[1]:
+        case "web":
+            # This is just a simple way to supply args to gunicorn
+            sys.argv = [".", "monty.wsgi", "--bind=0.0.0.0:8000", "-p server.pid"]
+
+            wsgi.run()
+        case "migrate":
+            management.call_command("migrate")
+        case _:
+            sys.stdout.write("please pass in a valid command [web, migrate]")
+
+
+if __name__ == "__main__":
+    run()
+```
+
+## instellar.yml
+
+This file is used to describe to PAKman how to build your application. The following is taken from a Django based application. This configuration will change depending on your application. This file will work with a freshly generated rails app.
+
+### Dependencies
+
+Let's begin with the `dependencies`. You will also notice we're enabling `trace: true` in our dependencies. This will enable dependency tracing, which means even if we miss some dependency in our `runtime` the build tool will trace the dependency and automatically include it in our package. That's cool!
+
+```yaml
+dependencies:
+  trace: true
+  build:
+    - python3
+    - py3-pip
+  runtime:
+    - bash
+    - curl
+    - jq
+    - s6
+    - python3
+    - py3-pip
+    - monty-openrc
+    - libpq
+    - ca-certificates
+```
+
+### Choosing a Stack
+
+We're using alpine as the base image for all the containers that run the applications. We recommend using `alpine/3.17` for all applications. However please check the [alpine packages](https://pkgs.alpinelinux.org/packages) listing to see compatibility for your language and framework. In this case alpine/3.17 will run python `3.10.11`.
+
+You can choose from the following:
+
+- alpine/edge
+- alpine/3.17
+- alpine/3.16
+- alpine/3.15
+
+```yaml
+stack: alpine/3.17
+```
+
+### Build
+
+The below section tells PAKman how to actually build your application. In this case we're simply exporting the `$PATH` so our pip based binaries can be called. We then install `shiv` and then install our application dependencies into the `dist/` directory. We then copy the `monty`, `polls`, and `manage.py` script into the `dist/` directory. Now our `dist` directory is ready for `shiv`.
+
+We call shiv with the `--site-packages` option set to `dist`. We add the `--compressed` flag so `shiv` will compress the build. We set the `-p` flag to define the shebag that shiv will use to locate python. The `-o` flag stands for output, shiv will build our application into a single executable binary as `dist/bin/monty`. Finally we add the `-e` flag, this defines the entry point for our application. We reference the `run` function in the `main.py` that we created earlier. 
+
+```yaml
+build:
+  destinations: 
+    - dist/bin
+  command: |
+    export PATH=$PATH:$HOME/.local/bin
+
+    pip install shiv
+    pip install -r requirements.txt --target dist/
+    cp -r monty polls manage.py dist/
+
+    shiv --site-packages dist --compressed -p '/usr/bin/env python3' -o dist/bin/monty -e monty.main:run
+```
+
+### Run
+
+The below section explains how your application is run. You can see we have the ability to define `commands`. These are commands you wish to run like migrations or seeds if you have them.
+
+The `services` section enables you to define how your application is run. How does it start? How does it stop? In this case we're using the kill pid. In the above `main.py` section we set the `-p` flag to output the pid file in the same directory as our app, so we will use the same path for our `pid_path`.
+
+```yaml
+run: 
+  name: monty
+  commands: 
+  - name: migrate
+    binary: monty
+    call: 'migrate'
+  services:
+  - name: web
+    binary: monty
+    start: 
+      call: web
+    stop:
+      kill: true
+      pid_path: server.pid
+```
+
+### Hooks
+
+### Hooks
+
+These are the lifecycle of the alpine packages. You can define their behaviour. Generally we don't expect this to change from app to app. However feel free to adjust as required.
+
+In this case `rc-update add monty` will add our `monty` app to the default run. This will ensure our app automatically starts when the container is restarted (incase it needs to restart).
+
+The `rc-service monty migrate` will run the migration. In this case it will run after the package is installed and after the upgrade.
+
+- `rc-service monty start` will start the application
+- `rc-service monty stop` will simply stop the application
+
+Your application will be built into openrc and supervised by the [`s6` supervisor suite](https://github.com/skarnet/s6).
+
+
+```yaml
+hook:
+  post-install: |
+    rc-update add monty
+    rc-service monty migrate
+
+  pre-upgrade: |
+    rc-service monty stop
+
+  post-upgrade: |
+    rc-service monty migrate
+    rc-service monty start
+
+  post-deinstall: |
+    rc-service monty stop
+    rc-update del monty
+```
+
+## Putting it together
+
+The final file looks like the following:
+
+```yaml
+dependencies:
+  trace: true
+  build:
+    - python3
+    - py3-pip
+  runtime:
+    - bash
+    - curl
+    - jq
+    - s6
+    - python3
+    - py3-pip
+    - monty-openrc
+    - libpq
+    - ca-certificates
+
+stack: alpine/3.17
+
+build:
+  destinations: 
+    - dist/bin
+  command: |
+    export PATH=$PATH:$HOME/.local/bin
+
+    pip install shiv
+    pip install -r requirements.txt --target dist/
+    cp -r monty polls manage.py dist/
+
+    shiv --site-packages dist --compressed -p '/usr/bin/env python3' -o dist/bin/monty -e monty.main:run
+
+run: 
+  name: monty
+  commands: 
+  - name: migrate
+    binary: monty
+    call: 'migrate'
+  services:
+  - name: web
+    binary: monty
+    start: 
+      call: web
+    stop:
+      kill: true
+      pid_path: server.pid
+
+hook:
+  post-install: |
+    rc-update add monty
+    rc-service monty migrate
+
+  pre-upgrade: |
+    rc-service monty stop
+
+  post-upgrade: |
+    rc-service monty migrate
+    rc-service monty start
+
+  post-deinstall: |
+    rc-service monty stop
+    rc-update del monty
+```
