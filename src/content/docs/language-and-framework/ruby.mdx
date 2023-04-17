@@ -188,9 +188,6 @@ run:
     binary: rails
     start: 
       call: server
-    stop:
-      kill: true
-      pid_path: tmp/pids/server.pid
   - name: worker
     binary: bundle
     start:
