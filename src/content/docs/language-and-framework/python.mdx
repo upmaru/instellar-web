@@ -10,7 +10,7 @@ This page takes you through setting up instellar for a Django application. You w
 
 ## Example Application
 
-We've created an [example application](https://github.com/upmaru-stage/monty) in case you wish to skip staright to the source code.
+We've created an [example application](https://github.com/upmaru-stage/monty) in case you wish to skip right to the source code.
 
 import { Callout } from '@components/Callout'
 
@@ -120,7 +120,7 @@ build:
 
 The below section explains how your application is run. You can see we have the ability to define `commands`. These are commands you wish to run like migrations or seeds if you have them.
 
-The `services` section enables you to define how your application is run. How does it start? How does it stop? In this case we're using the kill pid. In the above `main.py` section we set the `-p` flag to output the pid file in the same directory as our app, so we will use the same path for our `pid_path`.
+The `services` section enables you to define how your application is run. How does it start? In this case we're using the kill pid. In the above `main.py` section we set the `-p` flag to output the pid file in the same directory as our app, so we will use the same path for our `pid_path`.
 
 ```yaml
 run: 
@@ -134,12 +134,7 @@ run:
     binary: monty
     start: 
       call: web
-    stop:
-      kill: true
-      pid_path: server.pid
 ```
-
-### Hooks
 
 ### Hooks
 
