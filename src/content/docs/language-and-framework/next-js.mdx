@@ -6,16 +6,20 @@ description: This page takes you through setting up instellar on a Next.js appli
 section: Language and Framework
 ---
 
-This page takes you through setting up instellar for a Next.js application. You will learn how to configure your application to run on your PaaS
+import { Callout } from '@components/Callout'
+
+This page takes you through setting up instellar for a Next.js application. You will learn how to configure your application to run on your PaaS.
 
 ## Example Application
 
 We've created an [example application](https://github.com/upmaru-stage/nimbus) in case you wish to skip right to the source code.
 
-import { Callout } from '@components/Callout'
-
 <Callout title="A note on INSTELLAR_ENDPOINT" type="warning">
 The examples in the codebase we referenced the `.github/workflows/deployment.yml` file will contain a value for `INSTELLAR_ENDPOINT` this is only necessary in those repositories since they're deploying to our staging environment. For our customers we recommend omitting this value.
+</Callout>
+
+<Callout title="A note on next 13.3.0">
+The example uses next `13.2.4` because later version [has a bug](https://github.com/vercel/next.js/issues/48077) that causes the `next/image` module to not work properly. We recommend sticking with `13.2.4` until the bug is resolved.
 </Callout>
 
 In this example we build a Next.js using the standalone option. In this configuration `next/image` is also fully working as intended.
