@@ -18,11 +18,11 @@ We've created an [example application](https://github.com/upmaru-stage/nimbus) i
 The examples in the codebase we referenced the `.github/workflows/deployment.yml` file will contain a value for `INSTELLAR_ENDPOINT` this is only necessary in those repositories since they're deploying to our staging environment. For our customers we recommend omitting this value.
 </Callout>
 
+In this example we build a Next.js using the standalone option. In this configuration `next/image` is also fully working as intended.
+
 <Callout title="A note on next 13.3.0">
 The example uses next `13.2.4` because later version [has a bug](https://github.com/vercel/next.js/issues/48077) that causes the `next/image` module to not work properly. We recommend sticking with `13.2.4` until the bug is resolved.
 </Callout>
-
-In this example we build a Next.js using the standalone option. In this configuration `next/image` is also fully working as intended.
 
 ## next.config.js
 
