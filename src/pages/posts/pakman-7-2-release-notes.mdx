@@ -1,0 +1,110 @@
+---
+layout: "../../layouts/Blog.astro"
+id: 7
+title: "PAKman 7.2 Release Notes"
+pubDate: 2023-04-21
+description: "PAKman our build system has received some upgrades in version 7.2, we recommend to all our customers."
+author:
+  avatar: /authors/zack-siri.jpeg
+  name: "Zack Siri"
+  position: "Founder / CEO"
+tags: ["changelog", "pakman"]
+image:
+  url: /posts/pakman-7-2-release-notes/cover.jpg
+  alt: Cover image for PAKman 7.2 Release Notes
+---
+
+# PAKman 7.2 Release Notes
+
+PAKman is the build system that builds your application into an easily distributable package. We started out with a simple goal, to build a build system that is fast, reliable, minimizes dependencies on external tooling and finally produces packages that are small and easy to distribute. Today we're happy to announce PAKman version 7.2. Check out the action on [github marketplace](https://github.com/marketplace/actions/instellar-pakman)
+
+Let's take a look at what's in this release.
+
+## Faster Upgrades / Configuration Changes
+
+Since version 7 is a major upgrade, there are a few breaking changes to be aware of. The format for the `instellar.yml` has been changed quite abit. Below are some of the changes to be aware of.
+
+### Dependencies
+
+The dependency section now has an optional field called `trace: true` we introduced this flag because some programming languages had issues with dependency tracing. We recommend on setting this to `trace: true` for all frameworks except Ruby on Rails.
+
+### Build
+
+Previously you could only specify a single build `destination`. We've changed this and now it supports specifying multiple build destinations.
+
+Change
+
+```yaml
+build:
+  destination: '_build/prod/rel/someapp/*'
+```
+
+To
+
+```yaml
+build:
+  destinations: 
+    - '_build/prod/rel/someapp/*'
+```
+
+### Run
+
+The run section also received a few clean ups. You can now specify a separate `commands` section. Here is an elixir example:
+
+```yaml
+run:
+  commands:
+    - name: migrate
+      binary: someapp
+      call: 'eval Someapp.Release.Tasks.migrate'
+  services:
+    - name: web
+      binary: someapp
+      start:
+        call: start
+```
+
+You'll notice from above that the `stop` section is now gone. This is because our bug fix ensures that `s6` is directly supervising the application which means `s6` can handle the `stop` of our applications properly. This change gave is > 30% boost in upgrade speed across our applications, since now s6 can terminate applications much more effectively during the upgrade process.
+
+## Example Applications
+
+We've also updated our documentation section to include more programming languages and example, if you wish to see how the new configuration should be written please see our [Documentation](/docs/getting-started/). 
+
+If you're unsure about how to upgrade please feel free to reach out to our support.
+
+## Reduced Dependency
+
+In version < 7 all the apps built using PAKman still relied on an external github action for the `Archiving` step. With the release of `7.2` this dependency is now gone. Everything required to build a package is now contained within the PAKman action. This means in `.github/workflows/deployment.yml` you can remove the following:
+
+```yaml
+- name: 'Archive'
+  uses: juankaram/archive-action@v1.0.0
+  with:
+    args: zip -r packages.zip /github/home/packages
+```
+
+Replace it with:
+
+```yaml
+- name: 'Archive'
+  uses: upmaru/pakman@alpine-3.17-7.2
+  with:
+    entrypoint: /var/lib/pakman/bin/archive.sh
+```
+
+This will also help reduce build time since now github action will build not need to build a second action. It will simply use PAKman for all the steps.
+
+Please make sure to select the correct action version based on your requirement of alpine version.
+
+## Availability
+
+We're incredibly proud of this release since it resolves many long standing issues, adds support for many languages and frameworks and really optimizes the build performance. We highly recommend this upgrade for all existing applications and all new applications moving forward.
+
+PAKman 7.2 is available for upgrade now, you can safely upgrade your application to get the performance gains right away. Please see the main page on [github marketplace](https://github.com/marketplace/actions/instellar-pakman) for all available versions.
+
+
+
+
+
+
+
