@@ -64,7 +64,7 @@ run:
         call: start
 ```
 
-You'll notice from above that the `stop` section is now gone. This is because our bug fix ensures that `s6` is directly supervising the application which means `s6` can handle the `stop` of our applications properly. This change gave is > 30% boost in upgrade speed across our applications, since now s6 can terminate applications much more effectively during the upgrade process.
+You'll notice from above that the `stop` section is now gone. This is because our bug fix ensures that `s6` is directly supervising the application which means `s6` can handle the `stop` of our applications properly. This change gave us > 30% boost in upgrade speed across our applications, since now s6 can terminate applications much more effectively during the upgrade process.
 
 ## Example Applications
 
