@@ -6,6 +6,7 @@ import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 interface MainNavProps {
   pathName: string
   width: string
+  docsLinks: []
 }
 
 const MainNav: FunctionComponent<MainNavProps> = (props) => {
@@ -15,7 +16,7 @@ const MainNav: FunctionComponent<MainNavProps> = (props) => {
   const links = [
     { href: '/', text: 'Home' },
     { href: '/blog/', text: 'Blog' },
-    { href: '/docs/getting-started', text: 'Docs' },
+    { href: '/docs/getting-started', text: 'Docs', subLinks: props.docsLinks },
     { href: 'https://status.instellar.app', target: '_blank', text: 'Status' }
   ]
 
@@ -72,7 +73,7 @@ const MainNav: FunctionComponent<MainNavProps> = (props) => {
               {links.map((link) => {
                 const className = `block rounded-md px-3 py-2 text-base font-medium ${pathname === link.href ? 'text-purple-400' : 'text-white hover:bg-slate-700/10 hover:text-white'}`
 
-                return <a
+                return <span key={link.text}><a
                   key={link.text}
                   href={link.href}
                   target={link.target}
@@ -80,6 +81,31 @@ const MainNav: FunctionComponent<MainNavProps> = (props) => {
                 >
                   {link.text}
                 </a>
+                {link.subLinks ? <ul className="space-y-9 ml-6 my-2">
+                  {link.subLinks.map((section) => (
+                    <li key={section}>
+                      <h2 className="font-display font-medium text-slate-900 dark:text-white">
+                        {section.title}
+                      </h2>  
+                      <ul
+                        role="list"
+                        className="mt-2 space-y-2 border-l-2 border-slate-100 dark:border-slate-800 lg:mt-4 lg:space-y-4 lg:border-slate-200"
+                      >
+                        {section.links.sort((a, b) => a.id - b.id).map((link: {href: string, title: string}) => (
+                          <li key={link.title} className="relative">
+                            <a
+                              href={link.href}
+                              className={`block w-full pl-3.5 before:pointer-events-none before:absolute before:-left-1 before:top-1/2 before:h-1.5 before:w-1.5 before:-translate-y-1/2 before:rounded-full ${props.pathName.includes(link.href) ? 'font-semibold text-purple-400 before:bg-purple-400' : 'text-slate-500 before:hidden before:bg-slate-300 hover:text-slate-600 hover:before:block dark:text-slate-400 dark:before:bg-slate-700 dark:hover:text-slate-300'}`}
+                              >
+                                {link.title}
+                            </a>
+                          </li>
+                        ))}
+                      </ul>
+                    </li>
+                  ))}
+                </ul> : null}
+              </span>
               })}
             </div>
             <a

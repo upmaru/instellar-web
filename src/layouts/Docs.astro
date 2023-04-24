@@ -47,7 +47,7 @@ const navigation = groups.map(group => ({
 	</head>
   <body class="bg-slate-900 font-sans">
     <header>
-      <MainNav pathName={Astro.request.url} width="max-w-8xl" client:load />
+      <MainNav pathName={Astro.request.url} docsLinks={navigation} width="max-w-8xl" client:load />
     </header>
     {Astro.url.pathname.includes("/docs/getting-started") ? <Hero /> : null}
     <div class="relative mx-auto flex max-w-8xl justify-center sm:px-2 lg:px-8 xl:px-12">
