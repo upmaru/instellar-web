@@ -1,0 +1,67 @@
+---
+id: 1
+link: Introduction
+title: Introduction
+description: High level overview of how the cluster works
+section: Setup a Cluster
+---
+
+The cluster is the infrastructure that will run your applications. This section will take you through the process of setting up a cluster and explain what all the parts do. You can do a simple single-node setup if you just want a dev environment, however this guide will focus on setting up a minimal production ready cluster.
+
+It's worth noting that there are many ways to setup a cluster. This guide is meant to present the most simple production ready cluster. Let's take a look at what's required 
+
+The diagram below gives you a glimpse into all the basic components that make up a cluster. In this example we have 3 nodes that we use to run the application container, and single bastion node.
+
+![production cluster anatomy](/docs/instellar/production-cluster.png)
+
+## Bastion Node
+
+The bastion node is the only node exposing port `22` to the public internet. The application nodes cannot be seen on the open internet. They're hidden inside a VPC. The only way we can access them is through the bastion node. Bastion nodes are also known as **jump hosts**. Essentially you ssh into the bastion node and jump to other nodes from there.
+
+## Application Nodes
+
+This is where our application is run. In a safe isolated environment. We expose the following ports on our application nodes
+
+- `443/80` - This will enable https/http traffic to flow to the node. 
+  - Ports 443 and 80 are mapped to Uplink automatically.
+- `49152` - This is the management port for uplink.
+  - This is how instellar communicates with uplink
+- `8443` - This is the management port for LXD.
+  - This is how instellar communicates with LXD
+
+import { Callout } from '@components/Callout'
+
+<Callout title="A note on Databases">
+We don't recommend running databases inside of your cluster. It may be ok for dev / staging envrionments. However we recommend it's best to provision a external managed services. You have a few options.
+
+- Digital Ocean
+- Aiven.io
+- Amazon RDS
+- Google Cloud SQL
+- Neon Tech
+- Supabase
+- Planet Scale
+- Elephant SQL
+
+Choose to provision a node closest to your cluster.
+</Callout>
+
+## Uplink
+
+Uplink provides load balancing and serves as a routing mesh for the cluster. You can run a single uplink node in a cluster that has multiple nodes. You just need to be sure to route your domain to the node that has uplink running.
+
+Uplink supports multiple modes `lite` and `pro` mode.
+
+### Lite Mode
+
+With lite mode. You can run a single instance of uplink. This should be suffice for most setups. Uplink runs a very capable load balancer called Caddy. It can serve heavy traffic to your containers without any problems.
+
+### Pro Mode
+
+Pro mode opens up many opportunities. It enables multiple instances of uplink to be run in a single cluster. This is great if you need high availability load balancer. The pro mode however requires a postgresql database. You can run a postgresql container inside the cluster or use a DBaaS like Digital Ocean or Aiven.io's managed database services. Pro mode will be available shortly.
+
+## Provisioning a Cluster
+
+It certainly is possible to set everything up by hand through the UI. However we recommend the IaC (infrastructure as code) when it comes to setting up your infrastructure. We want the cluster setup to take < than 5 mins so we've created some terraform modules that will do this for you. Check out the [Terraform](/docs/setup-a-cluster/terraform/) for more details.
+
+
