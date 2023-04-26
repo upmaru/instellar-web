@@ -10,7 +10,16 @@ const docsEntries = await getCollection('docs')
 const groupedEntries = _.groupBy(docsEntries, (entry : {data: {section: string}}) => entry.data.section)
 const groups = Object.keys(groupedEntries)
 
-const navigation = groups.map(group => ({
+
+const indices = {
+  "Introduction": 1,
+  "Storage": 2,
+  "Setup a Cluster": 3,
+  "Github Integration": 4,
+  "Language and Framework": 5
+}
+
+const navigation = groups.sort((a, b) => indices[a] - indices[b]).map(group => ({
   title: group,
   links: groupedEntries[group].map(entry => ({
     id: entry.data.id, title: entry.data.link, href: `/docs/${entry.slug}`
