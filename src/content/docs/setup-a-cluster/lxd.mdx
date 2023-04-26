@@ -7,3 +7,208 @@ section: Setup a Cluster
 ---
 
 This next section will show you how to setup an LXD cluster. It depends on you having already setup a cluster of machines with one of the [cloud providers](/docs/setup-a-cluster/terraform/). If you haven't done that please first setup your compute resource.
+
+There may be some minor differences between each provider which will be highlighted.
+
+Once you boot up your instance you can login by using the following command (assuming you've setup your ssh authentication correctly).
+
+## Login via SSH
+
+If you used the terraform module to setup your cluster, you can login to your **bastion**. Simply copy the ip address of your bastion and login with
+
+```shell
+# DigitalOcean and Hetzner
+ssh root@<ip-address>
+```
+
+Now you're in the **bastion**. You'll want to jump to the actual nodes that will be running your application. 
+
+You'll want to use the private ip of each node from your bastion
+
+```shell
+# assuming you use 10.x.x.x/16 as your subnet
+ssh root@10.x.x.x
+```
+
+## Install LXD
+
+import { Callout } from '@components/Callout'
+
+<Callout title="You may not need to install LXD">
+On some providers LXD comes pre-installed in the default image. If you type `lxd init` and you get an error, it probably means you need to install LXD first.
+</Callout>
+
+Run the following commands:
+
+```shell
+apt update && apt install snapd
+```
+
+This will setup snapd, we'll then setup lxd using snap
+
+```shell
+snap install lxd
+```
+
+Once LXD is installed you should be able to run `lxd init` which will lead you to the next step.
+
+## LXD Init
+
+Let's initialize LXD.
+
+```shell
+lxd init
+```
+
+LXD will guide you through the initialization steps
+
+```shell
+Would you like to use LXD clustering? (yes/no) [default=no]: yes
+```
+
+For the IP address or DNS name you can use the **private IP** of your instance.
+
+```shell
+What IP address or DNS name should be used to reach this node? [default=146.190.80.210]: 10.0.1.2
+```
+
+Since this is your first node the answer to the following is `n`
+
+```shell
+Are you joining an existing cluster? (yes/no) [default=no]: no
+```
+
+For your node name you can keep the default one 
+
+```shell
+What name should be used to identify this node in the cluster? [default=docs-example-01]: <enter to use default>
+```
+
+For the next one LXD will ask you to setup password authentication. Go ahead and type `no` and hit enter.
+
+```shell
+Setup password authentication on the cluster? (yes/no) [default=no]:
+```
+
+Next LXD will prompt you to setup a storage pool. Simply hit enter to move forward.
+
+```shell
+Do you want to configure a new local storage pool? (yes/no) [default=yes]: <enter>
+```
+
+You can opt for `zfs` as the default. Simply hit enter to move forward.
+
+```shell
+Name of the storage backend to use (btrfs, dir, lvm, zfs) [default=zfs]:
+```
+
+When asked to create a new ZFS pool use the default `yes`. Hit enter to go to the next step.
+
+```shell
+Create a new ZFS pool? (yes/no) [default=yes]:
+```
+
+When asked if you would like to use an empty block device you can use the default answer `no`. Simply hit enter to move to the next.
+
+```shell
+Would you like to use an existing empty block device (e.g. a disk or partition)? (yes/no) [default=no]: 
+```
+
+You will be asked about the size of the loop device. Whatever your disk size is you can subtract 9 and use that. For example my disk had 24GB that gives me about `15`.
+
+```shell
+Size in GiB of the new loop device (1GiB minimum) [default=5GiB]: 15GiB
+```
+
+
+Next up you'll be asked if you want to configure a new remote storage pool. For this one you can choose `no`. Hit enter to pass right through.
+
+```shell
+Do you want to configure a new remote storage pool? (yes/no) [default=no]:
+```
+
+When asked if you wish to connect MAAS server you can answer `no`. Hit enter and pass right through.
+
+```shell
+Would you like to connect to a MAAS server? (yes/no) [default=no]:
+```
+
+Next you'll be asked about setting up bridge or host interface for networking. For this one you can answer as the default `no`.
+
+```shell
+Would you like to configure LXD to use an existing bridge or host interface? (yes/no) [default=no]:
+```
+
+Next up is Fan overlay network. On this one you'll want to answer `yes`. Simply hit enter to move to the next setting.
+
+```shell
+Would you like to create a new Fan overlay network? (yes/no) [default=yes]:
+```
+
+Next is subnet Fan underlay configuration. On this one you'll want to enter what you used when you created the VPC on the cloud provider.
+
+<Callout title="Subnet Configuration">
+The subnet will depend on what you used to create your VPC with. You can check in the UI of the cloud provider. Here are some examples:
+
+- 10.0.0.0/16
+- 10.0.1.0/24
+
+LXD only accepts subnet configuration with either `/16` or `/24`
+</Callout>
+
+```shell
+What subnet should be used as the Fan underlay? [default=auto]: 10.0.2.0/24
+```
+
+Next one is if you would like LXD to automatically update cached images. You can go ahead and answer the default which is `yes`.
+
+```shell
+Would you like stale cached images to be updated automatically? (yes/no) [default=yes]:
+```
+
+Next is the last LXD will ask if you wish to output the YAML config you can enter `no` as the default for now. If we need it we can generate the preseed later.
+
+```shell
+Would you like a YAML "lxd init" preseed to be printed? (yes/no) [default=no]:
+```
+
+This concludes the initialization process. It's good practice to reboot your machine once after initialization.
+
+```shell
+sudo reboot
+```
+
+## Test Drive LXD
+
+Once you have initialized lxd you can try launching a container. You can try the following commands.
+
+```shell
+$ lxc list
+
++------+-------+------+------+------+-----------+----------+
+| NAME | STATE | IPV4 | IPV6 | TYPE | SNAPSHOTS | LOCATION |
++------+-------+------+------+------+-----------+----------+
+```
+
+Let's try launching a container
+
+```shell
+$ lxc launch images:alpine/3.17 test
+Creating test
+Starting test
+```
+
+If you run `lxc list` again you should see 
+
+```shell
++------+---------+--------------------+------+-----------+-----------+-----------------+
+| NAME |  STATE  |        IPV4        | IPV6 |   TYPE    | SNAPSHOTS |    LOCATION     |
++------+---------+--------------------+------+-----------+-----------+-----------------+
+| test | RUNNING | 240.2.0.216 (eth0) |      | CONTAINER | 0         | docs-example-01 |
++------+---------+--------------------+------+-----------+-----------+-----------------+
+```
+
+The container has started and there is an ip address assigned. At this point your LXD initialization can be marked as a success.
+
+At this point you have a choice. You can continue using a single instance setup or if you want a more scalable setup in the next section we will show you how to add more machines to your cluster.
+
