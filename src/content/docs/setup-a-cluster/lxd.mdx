@@ -178,7 +178,7 @@ This concludes the initialization process. It's good practice to reboot your mac
 sudo reboot
 ```
 
-## Test Drive LXD
+### Test Drive LXD
 
 Once you have initialized lxd you can try launching a container. You can try the following commands.
 
@@ -212,3 +212,107 @@ The container has started and there is an ip address assigned. At this point you
 
 At this point you have a choice. You can continue using a single instance setup or if you want a more scalable setup in the next section we will show you how to add more machines to your cluster.
 
+## Adding a Node
+
+Before we can add a new node we will need to run a command on one of the previous nodes that is already setup. So ssh into one of your existing nodes and run the following.
+
+```shell
+lxc cluster add <name-of-new-node>
+Member <name-of-new-node> join token: <output-of-token>
+```
+
+You will need this join token for the new node.
+
+To Add a node to your cluster, you can simply modify your terraform module by increasing the `cluster_size` parameter. The terraform module will provision a new node in your cluster then you can simply run `lxd init`. This time we will answer certain questions differently. Let's begin!
+
+
+```shell
+Would you like to use LXD clustering? (yes/no) [default=no]: yes
+What IP address or DNS name should be used to reach this node? [default=some-ip-address]: <private-ip-here>
+Are you joining an existing cluster? (yes/no) [default=no]: yes
+Do you have a join token? (yes/no/[token]) [default=no]: <output-of-token>
+All existing data is lost when joining a cluster, continue? (yes/no) [default=no] yes
+Choose "size" property for storage pool "local": 30GiB
+Choose "source" property for storage pool "local": 
+Choose "zfs.pool_name" property for storage pool "local": 
+Would you like a YAML "lxd init" preseed to be printed? (yes/no) [default=no]:
+```
+
+That's it! Your node is now added to the cluster. If you run `lxc cluster list` you will see a list of nodes.
+
+```shell
++----------------+-----------------------+------------------+--------------+----------------+-------------+--------+-------------------+
+|      NAME      |          URL          |      ROLES       | ARCHITECTURE | FAILURE DOMAIN | DESCRIPTION | STATE  |      MESSAGE      |
++----------------+-----------------------+------------------+--------------+----------------+-------------+--------+-------------------+
+| nebula-node-01 | https://10.0.1.1:8443 | database-standby | x86_64       | default        |             | ONLINE | Fully operational |
++----------------+-----------------------+------------------+--------------+----------------+-------------+--------+-------------------+
+| nebula-node-02 | https://10.0.1.2:8443 | database-leader  | x86_64       | default        |             | ONLINE | Fully operational |
+|                |                       | database         |              |                |             |        |                   |
++----------------+-----------------------+------------------+--------------+----------------+-------------+--------+-------------------+
+```
+
+If you run `lxc list` you should see a list of containers running (assuming you're already launched a test container).
+
+
+```shell
++------+---------+--------------------+------+-----------+-----------+----------------+
+| NAME |  STATE  |        IPV4        | IPV6 |   TYPE    | SNAPSHOTS |    LOCATION    |
++------+---------+--------------------+------+-----------+-----------+----------------+
+| test | RUNNING | 240.2.0.216 (eth0) |      | CONTAINER | 0         | nebula-node-02 |
++------+---------+--------------------+------+-----------+-----------+----------------+
+```
+
+To add more nodes you can simply repeat the above steps.
+
+## Verifying Networking
+
+Once you have joined 2 nodes in your cluster successfully It's time to test the cross node networking. This is simple to do.
+
+Let's launch another container. This time we will use the `--target` flag to make sure the container is launched on a different node from `test`
+
+```shell
+$ lxc launch images:alpine/3.17 test2 --target nebular-node-01
+Creating test2
+Starting test2
+```
+
+Running `lxc list` should return 2 containers.
+
+```shell
++-------+---------+--------------------+------+-----------+-----------+----------------+
+| NAME  |  STATE  |        IPV4        | IPV6 |   TYPE    | SNAPSHOTS |    LOCATION    |
++-------+---------+--------------------+------+-----------+-----------+----------------+
+| test  | RUNNING | 240.2.0.216 (eth0) |      | CONTAINER | 0         | nebula-node-02 |
++-------+---------+--------------------+------+-----------+-----------+----------------+
+| test2 | RUNNING | 240.3.0.209 (eth0) |      | CONTAINER | 0         | nebula-node-01 |
++-------+---------+--------------------+------+-----------+-----------+----------------+
+```
+
+Let's go inside the container.
+
+```shell
+$ lxc exec test2 -- ash
+```
+
+You should now be inside the container. The prompt should look different. Something like this
+
+```shell
+~ #
+```
+
+Let's try pinging `test` by running `ping test` from inside the container. You should see the output below. It should successfully resolve the IP of `test` and return the `time=` parameter. That time is the latency between the nodes.
+
+```shell
+~ # ping test
+PING test (240.2.0.216): 56 data bytes
+64 bytes from 240.2.0.216: seq=0 ttl=64 time=1.588 ms
+64 bytes from 240.2.0.216: seq=1 ttl=64 time=1.102 ms
+64 bytes from 240.2.0.216: seq=2 ttl=64 time=1.130 ms
+64 bytes from 240.2.0.216: seq=3 ttl=64 time=1.078 ms
+64 bytes from 240.2.0.216: seq=4 ttl=64 time=1.000 ms
+64 bytes from 240.2.0.216: seq=5 ttl=64 time=1.028 ms
+^C
+--- test ping statistics ---
+```
+
+At this point your setup is a success. You have multiple nodes running in your cluster and they can communicate with one another within the VPC.
