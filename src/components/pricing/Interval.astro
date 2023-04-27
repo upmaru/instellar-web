@@ -1,0 +1,20 @@
+---
+const url = Astro.request.url
+---
+
+<div class="relative z-10">
+  <h2 class="mx-auto max-w-4xl text-center text-5xl font-bold tracking-tight text-white">Plans for teams of all sizes</h2>
+  <p class="mx-auto mt-4 max-w-2xl text-center text-lg leading-8 text-white/60">Choose the plan that fits your requirements. If you need help choosing feel free to reach out! We have monthly and yearly plans.</p>
+  <div class="mt-16 flex justify-center">
+    <div class="grid grid-cols-2 gap-x-1 rounded-full bg-white/5 p-1 text-center text-xs font-semibold leading-5 text-white">
+      <!-- Checked: "bg-purple-500" -->
+      <a href="/pricing/monthly/" class={`cursor-pointer rounded-full px-2.5 py-1 ${url.includes('/pricing/monthly') ? 'bg-purple-500' : null}`}>
+        <span>Monthly</span>
+      </a>
+      <!-- Checked: "bg-purple-500" -->
+      <a href="/pricing/yearly/" class={`cursor-pointer rounded-full px-2.5 py-1 ${url.includes('/pricing/yearly') ? 'bg-purple-500' : null}`}>
+        <span>Yearly</span>
+      </a>
+    </div>
+  </div>
+</div>
