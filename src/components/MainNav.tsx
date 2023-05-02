@@ -18,7 +18,7 @@ const MainNav: FunctionComponent<MainNavProps> = (props) => {
     { href: '/pricing/yearly/', text: 'Pricing'},
     { href: '/docs/getting-started/', text: 'Docs', subLinks: props.docsLinks },
     { href: '/blog/', text: 'Blog' },
-    { href: 'https://status.instellar.app', target: '_blank', text: 'Status' }
+    { href: 'https://web.instellar.app/auth/sessions/new', target: '_blank', text: 'Sign in' }
   ]
 
   return (
@@ -110,10 +110,10 @@ const MainNav: FunctionComponent<MainNavProps> = (props) => {
               })}
             </div>
             <a
-              href="#" target="_blank"
+              href="https://web.instellar.app/auth/sessions/new" target="_blank"
               className="block w-full bg-slate-700/10 px-5 py-3 text-center font-medium text-white hover:bg-slate-600/10 hover:text-purple-500"
             >
-              Log in
+              Sign in
             </a>
           </div>
         </Popover.Panel>
