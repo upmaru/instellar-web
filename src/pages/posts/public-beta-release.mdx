@@ -1,0 +1,82 @@
+---
+layout: "../../layouts/Blog.astro"
+id: 8
+title: "Public Beta Release"
+pubDate: 2023-05-02
+description: "PAKman our build system has received some upgrades in version 7.2, we recommend to all our customers."
+author:
+  avatar: /authors/zack-siri.jpeg
+  name: "Zack Siri"
+  position: "Founder / CEO"
+tags: ["changelog"]
+image:
+  url: /posts/public-beta-release/cover.jpg
+  alt: Cover image for Public Beta Release
+---
+
+# Announcing Public Beta Release
+
+For the past few months, we've been hard at work preparing for the public beta of our application. We've taken the time to ensure that everything is cleaned up and finalized before we allow people to sign up and use our platform.
+
+
+## PAKman 7.2
+
+![pakman 7.2](/posts/pakman-7-2-release-notes/cover.jpg)
+
+During our private beta phase, our build system only supported one programming language and framework, and we encountered issues with application monitoring. However, with the release of PAKman 7.2, we were able to resolve these issues and expand our support to include many programming languages and frameworks. To help our customers get started, we've created several example projects, which you can find [here](/docs/getting-started/#programming-languages). We're thrilled with the progress we've made with PAKman and our build system overall.
+
+## Uplink 0.7.0
+
+![uplink](/posts/public-beta-release/uplink.jpg)
+
+We're thrilled to announce that we have finally shipped Uplink, one of the core components that powers our platform. Uplink is a powerful tool that utilizes Caddy to automatically route traffic to your containers, and it also handles deployments within your cluster. Furthermore, SSL certificates are stored on the S3 compatible bucket you set up in your organization config.
+
+The best part? Uplink is open source, which means you can access the source code for it [here](https://github.com/upmaru/uplink). 
+
+## Instellar 3.2.1
+
+We're excited to announce that our platform has been upgraded to version 3.2.1, which has resolved several issues and added support for new Uplink features. This update should help smooth out rough edges and simplify certain processes. Here are some of the issues that were addressed:
+
+- The installation process for adding a new repository on GitHub now works correctly.
+- Updates to environment variables will now be instantly reflected on the cluster without waiting for a new deployment.
+- New endpoints have been added to support Uplink.
+
+Overall, this upgrade is a significant step forward for our platform, and we hope it will enhance your experience as you work with our product.
+
+## Documentation
+
+When we announced our private beta in March 2023, we realized that our documentation was non-existent. We understand how crucial documentation is, particularly for developer tools, and so we've devoted significant effort over the past few months to improving it. While we recognize that documentation will continue to evolve alongside improvements to our platform, we're pleased with the progress we've made thus far.
+
+In addition to improving our documentation, we've created several instructional videos to help customers get started with Instellar. We invite you to check them out below.
+
+import { YouTube } from '@astro-community/astro-embed-youtube'
+
+This first video will show you how you can use our terraform module to setup your cluster on hetzner cloud. We currently have terraform modules supporting the following cloud providers:
+
+- [DigitalOcean](/docs/setup-a-cluster/digitalocean/)
+- [Hetzner](/docs/setup-a-cluster/hetzner/)
+
+We're working towards adding support for all the major cloud providers. If you have any provider in particular you'd like us to prioritize please let us know in our [slack](https://join.slack.com/t/upmaru/shared_invite/zt-1qncc89xi-Cwz1KiMHd19yI4IZmLcsGA) or reach out via any of our support channels.
+
+<YouTube id="hQK6pcvJOZw" />
+
+The second video shows you how to setup LXD hypervisor on your cluster.
+
+<YouTube id="MMcT8XL9f1s" />
+
+The third video shows you how to scale your cluster from 1 to any number of nodes.
+
+<YouTube id="IGFsIjsesVI" />
+
+## Support
+
+Finally, we've established a Slack group that you can join [here](https://join.slack.com/t/upmaru/shared_invite/zt-1qncc89xi-Cwz1KiMHd19yI4IZmLcsGA). This group is designed to provide direct support from me and ensure that you have a smooth process for setting up your own PaaS and deploying applications on it.
+
+If you require additional assistance or would like to discuss how to onboard Instellar within your organization, I've set up a calendar link that you can use to schedule a 1:1 meeting [here](https://cal.com/zacksiri/instellar-onboarding). During our meeting, I will personally support you and ensure that you get up and running smoothly on our platform.
+
+## Finally
+
+We have achieved a significant milestone in bringing our platform to this point, and I am excited about working closely with all of our customers. I believe that Instellar will be a valuable asset to any organization, as it can reduce DevOps costs and simplify deployments, enabling our customers to focus on shipping products.
+
+
+
