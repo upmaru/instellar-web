@@ -5,6 +5,8 @@ import CloudArrowUp from 'astro-heroicons/solid/CloudArrowUp.astro'
 import LockClosed from 'astro-heroicons/solid/LockClosed.astro'
 import PlayCircle from 'astro-heroicons/solid/PlayCircle.astro'
 
+import Newsletter from '@components/Newsletter.astro'
+
 import MagnifyingGlassCircle from 'astro-heroicons/solid/MagnifyingGlassCircle.astro'
 import Users from 'astro-heroicons/solid/Users.astro'
 import DocumentText from 'astro-heroicons/solid/DocumentText.astro'
@@ -239,24 +241,5 @@ import { YouTube } from '@astro-community/astro-embed-youtube'
       </div>
     </div>
   </div>
-	<div id="join-waitlist" class="bg-slate-900 py-16 sm:py-24">
-  	<div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
-    	<div class="relative isolate overflow-hidden bg-white px-6 py-16 shadow-2xl sm:rounded-3xl sm:px-24 xl:py-32 ring-1 ring-white/10">
-      	<h2 class="mx-auto max-w-2xl text-center text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">Instellar Updates</h2>
-      	<p class="mx-auto mt-2 max-w-xl text-center text-lg leading-8 text-slate-400">If you wish to stay informed about instellar.app sign up to our mailing list.</p>
-    		<div class="py-8">
-					<script async data-uid="e8c5dc8a56" src="https://upmaru.ck.page/e8c5dc8a56/index.js"></script>
-				</div>
-      	<svg viewBox="0 0 1024 1024" class="absolute top-1/2 left-1/2 -z-10 h-[64rem] w-[64rem] -translate-x-1/2" aria-hidden="true">
-        	<circle cx="512" cy="512" r="512" fill="url(#759c1415-0410-454c-8f7c-9a820de03641)" fill-opacity="0.7" />
-        	<defs>
-          	<radialGradient id="759c1415-0410-454c-8f7c-9a820de03641" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(512 512) rotate(90) scale(512)">
-            	<stop stop-color="#a855f7" />
-            	<stop offset="1" stop-color="#7e22ce" stop-opacity="0" />
-          	</radialGradient>
-        	</defs>
-      	</svg>
-    	</div>
-  	</div>
-	</div>
+	<Newsletter />
 </Main>
