@@ -26,13 +26,13 @@ git clone git@github.com:<your-organization>/<your-repo>.git
 
 ### Cluster Bootstrap
 
-Next we will need to delcare some variables in our `main.tf`. We'll start with `do_token`. This will enable input on terraform cloud. Terraform cloud will need to access your digital ocean api token. This will enable us to do just that.
+Next we will need to delcare some variables in our `main.tf`. We'll start with `do_token`.
 
 ```hcl
 variable "do_token" {}
 ```
 
-Next we'll define the `instellar` module. Below is an explanation of all the attributes
+Next we'll define the `instellar` module. Below is an explanation of all the attributes.
 
 + `source` - defines the module we will be using.
 
@@ -69,6 +69,14 @@ module "instellar" {
   ssh_keys = [
     "<ssh-key-fingerprint>"
   ]
+}
+
+output "trust_token" {
+  value = module.instellar.trust_token
+}
+
+output "cluster_address" {
+  value = module.instellar.cluster_address
 }
 ```
 
@@ -179,6 +187,14 @@ module "instellar_database" {
   engine            = "pg"
   engine_version    = "14"
   project_id        = module.instellar.project_id
+}
+
+output "trust_token" {
+  value = module.instellar.trust_token
+}
+
+output "cluster_address" {
+  value = module.instellar.cluster_address
 }
 ```
 
