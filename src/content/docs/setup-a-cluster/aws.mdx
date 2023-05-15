@@ -1,0 +1,82 @@
+---
+id: 5
+link: Amazon AWS
+title: Cluster on AWS
+description: Production ready cluster on AWS
+section: Setup a Cluster
+---
+
+In this section we show you how to use the [aws terraform module](https://registry.terraform.io/modules/upmaru/instellar/aws/latest) to setup your own infrastructure on Amazon AWS provider.
+
+import { Callout } from '@components/Callout'
+
+## Setup Project
+
+You can use our [terraform-module-template](https://github.com/upmaru/terraform-module-template) to create a repository. Click on the `Use this template` link on the repo.
+
+![use module template](/docs/github/use-module-template.png)
+
+Name the module and simply clone the repository down.
+
+Let's begin by cloning our repository we created using the template.
+
+```shell
+git clone git@github.com:<your-organization>/<your-repo>.git
+```
+
+### Cluster Bootstrap
+
+Next we will need to delcare some variables in our `main.tf`. We'll start with `access_key` and `secret_key`.
+
+```hcl
+variable "aws_access_key" {}
+variable "aws_secret_key" {}
+```
+
+Next We'll define the `instellar` module. Below is an explanation of all the attributes.
+
++ `source` - defines the module we will be using.
+
++ `version` - check for the latest version [here](https://registry.terraform.io/modules/upmaru/instellar/aws/latest)
+
++ `access_key` - AWS access token
+
++ `secret_key` - AWS secret key
+
++  `cluster_topology` - parameter allows you to input how many nodes you wish to have in your cluster. The more nodes the more computing power you have.
+
++  `cluster_name` - attribute is an arbitrary name you can use to name your cluster. This will also be prefixed to everything that is generated inside your infrastructure. 
+
++ `ssh_keys` - This represents the key id for the ssh key inside of your digital ocean account. If you have not setup your ssh key before see the [next section](#ssh-key).
+
+```hcl
+module "instellar" {
+  source = "upmaru/instellar/aws"
+  version = "0.3.6"
+
+  access_key   = var.aws_access_key
+  secret_key   = var.aws_secret_key
+  cluster_name = "fruits"
+  cluster_topology = [
+    {id = 1, name = "apple", size = "c5a.large"},
+    {id = 2, name = "watermelon", size = "c5a.large"}
+  ]
+  
+  storage_size = 40
+
+  # Name of key is from your aws console
+  # you manually add this via the GUI
+  ssh_keys = [
+    "zack-studio",
+    "zack-one-eight"
+  ]
+}
+
+output "trust_token" {
+  value = module.instellar.trust_token
+}
+
+output "cluster_address" {
+  value = module.instellar.cluster_address
+}
+```

@@ -13,6 +13,7 @@ Terraform is a tool for provisioning infrastructure embracing Infrastructure as 
 <QuickLinks>
   <QuickLink title="DigitalOcean" description="Use the digitalocean terraform module to setup a cluster" href="/docs/setup-a-cluster/digitalocean/" icon="/docs/digital-ocean/do-logo.png" />
   <QuickLink title="Hetzner" description="Use the hetzner cloud terraform module to setup a cluster" href="/docs/setup-a-cluster/hetzner/" icon="/docs/hetzner/hetzner-logo.png" />
+  <QuickLink title="AWS" description="Use the AWS terraform module to setup a cluster" href="/docs/setup-a-cluster/aws/" icon="/docs/aws/aws-logo.png" />
 </QuickLinks>
 
 To use these modules you have two choices. You can use terraform from the CLI or you can use terraform cloud. We recommend using terraform cloud it's free and below are instructions on how to sign up.
@@ -21,7 +22,27 @@ If you would like to see an overview of the workflow with Terraform Cloud and ou
 
 import { YouTube } from '@astro-community/astro-embed-youtube'
 
-<YouTube id="hQK6pcvJOZw" />
+<YouTube id="x8YNHyzkH60" />
+
+## Terraform Setup
+
+You can follow the instructions for [installing terraform here](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli). 
+
+### Use Module Template
+
+You can use our [terraform-module-template](https://github.com/upmaru/terraform-module-template) to create a repository. Click on the `Use this template` link on the repo.
+
+![use module template](/docs/github/use-module-template.png).
+
+Name the module and simply clone the repository down.
+
+### Consume Terraform Module
+
+Once you are up and running with terraform all you have to do is create a `main.tf` and you can start utilizing one of our terraform modules:
+
+- [DigitalOcean](/docs/setup-a-cluster/digitalocean/)
+- [Hetzner](/docs/setup-a-cluster/hetzner/)
+- [Amazon AWS](/docs/setup-a-cluster/aws/)
 
 ## Terraform Cloud
 
