@@ -10,10 +10,6 @@ In this section we show you how to use the [digitalocean terraform module](https
 
 import { Callout } from '@components/Callout'
 
-<Callout title="Terraform Cloud">
-You'll need a terraform cloud account to use this guide. If you haven't set this up you can follow [this guide](/docs/setup-a-cluster/terraform/#terraform-cloud).
-</Callout>
-
 ## Setup Project
 
 You can use our [terraform-module-template](https://github.com/upmaru/terraform-module-template) to create a repository. Click on the `Use this template` link on the repo.
@@ -208,11 +204,13 @@ Once you've entered the name and chosen the expiration time for the token click 
 
 ![new personal access token](/docs/digital-ocean/new-personal-access-token.png)
 
-You'll get to see the token once. Copy it and head over to terraform cloud. Click on `Configure variables`.
-
-![configure workspace](/docs/terraform/configure-workspace.png)
+You'll get to see the token once. Copy it and either use it in your `.auto.tfvars` or your terraform cloud. 
 
 ## Running Locally via CLI
+
+<Callout title="Sensitive Token" type="warning">
+The `hcloud_token` variable should not be checked into your code repository.
+</Callout>
 
 The `do_token` variable should not be checked into your code repository. If you're planning on running terraform locally, you can create a `.auto.tfvars` file and add the variable there. This file will only exist locally on your machine and will not be checked into your github repo.
 
@@ -232,6 +230,14 @@ terraform apply
 
 ## Running on Terraform Cloud
 
+<Callout title="Terraform Cloud">
+You'll need a terraform cloud account to use this guide. If you haven't set this up you can follow [this guide](/docs/setup-a-cluster/terraform/#terraform-cloud).
+</Callout>
+
+Click on `Configure variables`.
+
+![configure workspace](/docs/terraform/configure-workspace.png)
+
 You'll reach the `Variables` page. Click on `+ Add variable`.
 
 ![configure variables](/docs/terraform/configure-variables.png)
@@ -240,6 +246,6 @@ For the `Key` field enter `instellar_do_token`, and for the `Value` enter the to
 
 ![enter digital ocean token](/docs/digital-ocean/enter-your-token.png)
 
-Once you've entered the token you can do a `git push origin master` to your repository. Terraform cloud will automatically start running your modules.
+Once you've entered the token you can do a `git push origin master` or `git push origin main` to your repository. Terraform cloud will automatically start running your modules.
 
 You can also trigger runs using the terraform cloud ui.
