@@ -16,34 +16,24 @@ You'll need a terraform cloud account to use this guide. If you haven't set this
 
 ## Setup Project
 
-Let's begin by cloning our repository we created in the [terraform guide](/docs/setup-a-cluster/terraform/#repository).
+You can use our [terraform-module-template](https://github.com/upmaru/terraform-module-template) to create a repository. Click on the `Use this template` link on the repo.
+
+![use module template](/docs/github/use-module-template.png)
+
+Name the module and simply clone the repository down.
+
+Let's begin by cloning our repository we created using the template.
 
 ```shell
 git clone git@github.com:<your-organization>/<your-repo>.git
 ```
 
-Open the directory up in your favorite editor and create a `.gitignore` along with a `main.tf` file.
-
-You should have the following files in your directory
-
-```shell
-.gitignore
-main.tf
-```
-
-Let's cover the `.gitignore` first. You'll want to add the following content to your `.gitignore` file
-
-```
-.terraform
-.DS_Store
-```
-
 ### Cluster Bootstrap
 
-Next we will need to delcare some variables in our `main.tf`. We'll start with `instellar_do_token`. This will enable input on terraform cloud. Terraform cloud will need to access your digital ocean api token. This will enable us to do just that.
+Next we will need to delcare some variables in our `main.tf`. We'll start with `do_token`. This will enable input on terraform cloud. Terraform cloud will need to access your digital ocean api token. This will enable us to do just that.
 
 ```hcl
-variable "instellar_do_token" {}
+variable "do_token" {}
 ```
 
 Next we'll define the `instellar` module. Below is an explanation of all the attributes
@@ -54,7 +44,9 @@ Next we'll define the `instellar` module. Below is an explanation of all the att
 
 + `do_token` - variable is where you'll use the variable that was defined previously. We will feed the token into the terraform cloud UI later.
 
-+  `cluster_size` - parameter allows you to input how many nodes you wish to have in your cluster. The more nodes the more computing power you have. 
++  `cluster_topology` - parameter allows you to input how many nodes you wish to have in your cluster. The more nodes the more computing power you have.
+
+You can get digital ocean's node size [from here](https://slugs.do-api.dev/)
 
 +  `cluster_name` - attribute is an arbitrary name you can use to name your cluster. This will also be prefixed to everything that is generated inside your infrastructure. 
 
@@ -63,14 +55,23 @@ Next we'll define the `instellar` module. Below is an explanation of all the att
 ```hcl
 module "instellar" {
   source  = "upmaru/instellar/digitalocean"
-  version = "0.1.2"
+  version = "0.3.3"
 
-  do_token     = var.instellar_do_token
-  cluster_size = 3
-  cluster_name = "orion"
-  vpc_ip_range = var.instellar_ip_range
-  ssh_keys     = [
-    "52:0d:1a:16:5e:64:22:28:1c:ec:3a:72:ce:2f:77:ba"
+  do_token     = var.do_token
+  cluster_name = "fruits"
+  vpc_ip_range = "10.0.2.0/24"
+  cluster_topology = [
+    { id = 1, name = "apple", size = "s-2vcpu-2gb-amd" },
+    { id = 2, name = "watermelon", size = "s-2vcpu-2gb-amd" }
+  ]
+  node_size    = "s-2vcpu-2gb-amd"
+  # this number should be the value of storage from your node type and subtract 10
+  # for example if you are using s-2vcpu-2gb-amd with 60GB you can use 50
+  storage_size = 50
+
+  # SSH Keys added to digital account via UI
+  ssh_keys = [
+    "<ssh-key-fingerprint>"
   ]
 }
 ```
@@ -133,9 +134,9 @@ Next up step we'll configure our database. Below is an explanation for all the a
 ```hcl
 module "instellar_database" {
   source  = "upmaru/instellar/digitalocean//modules/database"
-  version = "0.1.2"
+  version = "0.3.3"
 
-  do_token          = var.instellar_do_token
+  do_token          = var.do_token
   cluster_vpc_id    = module.instellar.cluster_vpc_id
   cluster_name      = module.instellar.cluster_name
   region            = module.instellar.region
@@ -157,7 +158,7 @@ variable "instellar_do_token" {}
 
 module "instellar" {
   source  = "upmaru/instellar/digitalocean"
-  version = "0.1.2"
+  version = "0.3.3"
 
   do_token     = var.instellar_do_token
   cluster_size = 3
@@ -170,7 +171,7 @@ module "instellar" {
 
 module "instellar_database" {
   source  = "upmaru/instellar/digitalocean//modules/database"
-  version = "0.1.2"
+  version = "0.3.3"
 
   do_token          = var.instellar_do_token
   cluster_vpc_id    = module.instellar.cluster_vpc_id
@@ -185,7 +186,7 @@ module "instellar_database" {
 }
 ```
 
-Once you've made your edits according to your liking commit the code, however before you push in the next step we will make sure the `instellar_do_token` is in place.
+Once you've made your edits according to your liking commit the code, however before you push in the next step we will make sure the `do_token` is in place. See instruction for managing `do_token` locally [below](/docs/setup-a-cluster/digitalocean/#running-locally-via-cli)
 
 ## API Token
 
@@ -211,6 +212,26 @@ You'll get to see the token once. Copy it and head over to terraform cloud. Clic
 
 ![configure workspace](/docs/terraform/configure-workspace.png)
 
+## Running Locally via CLI
+
+The `do_token` variable should not be checked into your code repository. If you're planning on running terraform locally, you can create a `.auto.tfvars` file and add the variable there. This file will only exist locally on your machine and will not be checked into your github repo.
+
+```hcl
+do_token = "<your-do-token>"
+```
+
+If you use the template above the `.auto.tfvars` is automatically ignored.
+
+Once all the configuration files are in place simply run:
+
+```shell
+terraform init
+terraform plan
+terraform apply
+```
+
+## Running on Terraform Cloud
+
 You'll reach the `Variables` page. Click on `+ Add variable`.
 
 ![configure variables](/docs/terraform/configure-variables.png)
@@ -222,5 +243,3 @@ For the `Key` field enter `instellar_do_token`, and for the `Value` enter the to
 Once you've entered the token you can do a `git push origin master` to your repository. Terraform cloud will automatically start running your modules.
 
 You can also trigger runs using the terraform cloud ui.
-
-Once you've verified that all the nodes are running in your account, you can move on to [setting up LXD](/docs/setup-a-cluster/lxd/)
