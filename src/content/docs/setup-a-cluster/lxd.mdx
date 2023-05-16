@@ -10,7 +10,7 @@ import { Callout } from '@components/Callout'
 
 
 <Callout title="Manual cluster setup is no longer necessary">
-The new version of our terraform module automates clustering out of the box. However if you wish to learn what it's doing under the hood, read on.
+The new version of our terraform module (0.3.x onwards) automates clustering out of the box. However if you wish to learn what it's doing under the hood, read on.
 </Callout>
 
 This next section will show you how to setup an LXD cluster. It depends on you having already setup a cluster of machines with one of the [cloud providers](/docs/setup-a-cluster/terraform/). If you haven't done that please first setup your compute resource.
@@ -44,8 +44,6 @@ ssh root@10.x.x.x
 ```
 
 ## Install LXD
-
-import { Callout } from '@components/Callout'
 
 <Callout title="You may not need to install LXD">
 On some providers LXD comes pre-installed in the default image. If you type `lxd init` and you get an error, it probably means you need to install LXD first.
