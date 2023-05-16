@@ -155,7 +155,7 @@ module "instellar_database" {
 
 ## Final File
 
-Putting everthing together your `main.tf` should look like the following.
+Putting everything together your `main.tf` should look like the following.
 
 ```hcl
 variable "instellar_do_token" {}
@@ -198,11 +198,11 @@ output "cluster_address" {
 }
 ```
 
-Once you've made your edits according to your liking commit the code, however before you push in the next step we will make sure the `do_token` is in place. See instruction for managing `do_token` locally [below](/docs/setup-a-cluster/digitalocean/#running-locally-via-cli)
+Once you've made your edits according to your liking commit the code, however before you push or run `terraform apply` make sure the `do_token` is in place. See instruction for managing `do_token` locally [below](/docs/setup-a-cluster/digitalocean/#running-locally-via-cli)
 
 ## API Token
 
-Before you push to your repository let's look at how we can retrieve the API token to be used with digital ocean on terraform cloud.
+Let's look at how we can retrieve the API token to be used with digital ocean on terraform cloud.
 
 Head over to the `API` section on the main navigation.
 
