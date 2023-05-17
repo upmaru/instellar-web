@@ -1,0 +1,51 @@
+---
+layout: "../../layouts/Blog.astro"
+id: 9
+title: "AWS Support and New Terraform Module"
+pubDate: 2023-05-17
+description: "We've added support for AWS to our platform along with a new terraform module that automates cluster setup."
+author:
+  avatar: /authors/zack-siri.jpeg
+  name: "Zack Siri"
+  position: "Founder / CEO"
+tags: ["announcement"]
+image:
+  url: /posts/aws-support-new-terraform-module/cover.jpg
+  alt: Cover image for AWS support and new terraform module
+---
+
+# Adding AWS Support and New Terraform Module
+
+We've recently shipped a new version (0.3.x) of our terraform module. This update brings huge improvments in the workflow for setting up clusters. The biggest addition is also support for Amazon AWS.
+
+Let's take a deeper dive into what's new in this release.
+
+## Automated Cluster Setup
+
+In the previous terraform module there was still a requirement for users to login to the node to setup LXD manually. However in this new version we're happy to announce that there is no need to login to manually setup the instance.
+
+Once you run `terraform apply` the cluster is automatically setup without any manual intervention. This brings our cluster setup workflow to the ideals of infrastructure as code.
+
+We've also done a quick video demo to show you how the new terraform module works.
+
+import { YouTube } from '@astro-community/astro-embed-youtube'
+
+<YouTube id="x8YNHyzkH60" />
+
+## Platform Update 3.2.3
+
+We've also recently shipped a new version of our platform bringing some improvements such as
+
+- Logging in with your username
+- Bug fixes to the Add Cluster screen
+- Some minor bug fixes
+
+## Roadmap
+
+We're continuing our efforts to automate as much as possible. We've received feedback from our customer that onboarding needs to be easy and straight forward. We're working towards automating more of the cluster setup and we hope to share some of that with you soon. On top of that we're also working towards adding support for the following providers:
+
+- Google Cloud
+- Microsoft Azure
+
+If there is any provider you'd like to see on this list please feel free to reach out via support. We've also setup a [slack channel](https://join.slack.com/t/upmaru/shared_invite/zt-1qncc89xi-Cwz1KiMHd19yI4IZmLcsGA) and we hope to see you there.
+
