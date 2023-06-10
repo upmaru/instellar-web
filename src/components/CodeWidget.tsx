@@ -11,9 +11,6 @@ import hcl from '@vendor/languages/hcl'
 Prism.languages.hcl = hcl
 
 const codeLanguage = 'hcl'
-const code = `module "instellar" {
-  something = "blah"
-}`
 
 const tabs = [
   { name: 'main.tf', isActive: true },
@@ -31,8 +28,12 @@ function TrafficLightsIcon(props: any) {
 }
 
 const CodeWidget: FunctionComponent<any> = (props) => {
+  const { code, active, id } = props
+
+  if (!active) { return null }
+
   return (
-    <div className="relative rounded-2xl bg-[#0A101F]/80 ring-1 ring-white/10 backdrop-blur">
+    <div key={`code_${id}`} className="relative rounded-xl bg-[#0A101F]/80 ring-1 ring-white/10 backdrop-blur">
       <div className="absolute -top-px left-20 right-11 h-px bg-gradient-to-r from-sky-300/0 via-sky-300/70 to-sky-300/0" />
       <div className="absolute -bottom-px left-11 right-20 h-px bg-gradient-to-r from-blue-400/0 via-blue-400 to-blue-400/0" />
       <div className="pl-4 pt-4">
@@ -59,7 +60,7 @@ const CodeWidget: FunctionComponent<any> = (props) => {
             </div>
           ))}
         </div>
-        <div className="mt-6 flex items-start px-1 text-sm">
+        <div className="mt-2 flex items-start px-1 text-sm overflow-auto h-64">
           <div
             aria-hidden="true"
             className="select-none border-r border-slate-300/5 pr-4 font-mono text-slate-600"

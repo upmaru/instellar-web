@@ -11,7 +11,49 @@ import MagnifyingGlassCircle from 'astro-heroicons/solid/MagnifyingGlassCircle.a
 import Users from 'astro-heroicons/solid/Users.astro'
 import DocumentText from 'astro-heroicons/solid/DocumentText.astro'
 
-import CodeWidget from '@components/CodeWidget'
+import TerraformWidget from '@components/TerraformWidget'
+
+import { Octokit } from '@octokit/rest'
+
+const octokit = new Octokit({
+  auth: import.meta.env.GITHUB_TOKEN
+})
+
+const repos = await octokit.repos.listForOrg({
+  org: "insterra", 
+  type: "public",
+  sort: "full_name"
+})
+
+const terraformRepos = repos.data.filter((repo) => {
+  return repo.language === "HCL" 
+    && ["aws-compute", "digitalocean-compute", "hcloud-compute"].includes(repo.name) 
+})
+
+const icons: {[key: string]: string} = {
+  "aws-compute": "/docs/aws/aws-logo.png",
+  "digitalocean-compute": "/docs/digital-ocean/do-logo.png",
+  "hcloud-compute": "/docs/hetzner/hetzner-logo.png"
+}
+
+async function buildTemplate(repo: any) {
+  const c = await octokit.repos.getContent({
+    owner: repo.owner.login,
+    repo: repo.name,
+    path: "main.tf"
+  }) as {data: {content: string}}
+
+  return ({
+    id: repo.id,
+    name: repo.name,
+    description: repo.description,
+    html_url: repo.html_url,
+    content: atob(c.data.content),
+    icon: icons[repo.name]
+  })
+}
+
+const templates: any = await Promise.all(terraformRepos.map(buildTemplate))
 ---
 
 <Main title="PaaS on your terms - Instellar.app">
@@ -39,47 +81,7 @@ import CodeWidget from '@components/CodeWidget'
   </div>
   <div class="relative isolate">
     <div class="mx-auto max-w-7xl px-6 lg:px-8">
-      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-        <div class="grid grid-cols-1 gap-4">
-          <div class="relative flex items-center space-x-3 rounded-lg border border-slate-700 bg-slate-800 px-6 py-5 shadow-sm hover:border-slate-600">
-            <div class="flex-shrink-0">
-              <img class="h-10 w-10 rounded-full" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
-            </div>
-            <div class="min-w-0 flex-1">
-              <a href="#" class="focus:outline-none">
-                <span class="absolute inset-0" aria-hidden="true"></span>
-                <p class="text-sm font-medium text-white">Leslie Alexander</p>
-                <p class="truncate text-sm text-slate-500">Co-Founder / CEO</p>
-              </a>
-            </div>
-          </div>
-          <div class="relative flex items-center space-x-3 rounded-lg border border-slate-700 bg-slate-800 px-6 py-5 shadow-sm hover:border-slate-600">
-            <div class="flex-shrink-0">
-              <img class="h-10 w-10 rounded-full" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
-            </div>
-            <div class="min-w-0 flex-1">
-              <a href="#" class="focus:outline-none">
-                <span class="absolute inset-0" aria-hidden="true"></span>
-                <p class="text-sm font-medium text-white">Leslie Alexander</p>
-                <p class="truncate text-sm text-gray-500">Co-Founder / CEO</p>
-              </a>
-            </div>
-          </div>
-          <div class="relative flex items-center space-x-3 rounded-lg border border-slate-700 bg-slate-800 px-6 py-5 shadow-sm hover:border-slate-600">
-            <div class="flex-shrink-0">
-              <img class="h-10 w-10 rounded-full" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
-            </div>
-            <div class="min-w-0 flex-1">
-              <a href="#" class="focus:outline-none">
-                <span class="absolute inset-0" aria-hidden="true"></span>
-                <p class="text-sm font-medium text-white">Leslie Alexander</p>
-                <p class="truncate text-sm text-gray-500">Co-Founder / CEO</p>
-              </a>
-            </div>
-          </div>
-        </div>
-        <CodeWidget />
-      </div>
+      <TerraformWidget templates={templates} client:load />
     </div>
   </div>
 	<div class="relative isolate overflow-hidden">
