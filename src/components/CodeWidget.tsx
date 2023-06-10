@@ -60,7 +60,7 @@ const CodeWidget: FunctionComponent<any> = (props) => {
             </div>
           ))}
         </div>
-        <div className="mt-2 flex items-start px-1 text-sm overflow-auto h-64">
+        <div className="mt-2 flex items-start px-1 text-sm overflow-auto h-96">
           <div
             aria-hidden="true"
             className="select-none border-r border-slate-300/5 pr-4 font-mono text-slate-600"
