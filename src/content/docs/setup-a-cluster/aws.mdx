@@ -12,7 +12,7 @@ import { Callout } from '@components/Callout'
 
 ## Setup Project
 
-You can use our [terraform-module-template](https://github.com/upmaru/terraform-module-template) to create a repository. Click on the `Use this template` link on the repo.
+You can use our [terraform-module-template](https://github.com/insterra/aws-compute) to create a repository. Click on the `Use this template` link on the repo.
 
 ![use module template](/docs/github/use-module-template.png)
 
@@ -26,60 +26,17 @@ git clone git@github.com:<your-organization>/<your-repo>.git
 
 ### Cluster Bootstrap
 
-Next we will need to delcare some variables in our `main.tf`. We'll start with `access_key` and `secret_key`.
+Once you've cloned down the repository simply replace the `cluster_name` with the desired name for your cluster. You can also update the `node_size` and the `size` parameter in the `cluster_topology` based on the value you wish to use from aws ec2 instance sizes.
+
+Once you've updated the values create a `.auto.tfvars` and add your tokens.
 
 ```hcl
-variable "aws_access_key" {}
-variable "aws_secret_key" {}
+aws_access_key = <your aws access key>
+aws_secret_key = <your aws secret key>
+instellar_auth_token = <your instellar auth token>
 ```
 
-Next We'll define the `instellar` module. Below is an explanation of all the attributes.
-
-+ `source` - defines the module we will be using.
-
-+ `version` - check for the latest version [here](https://registry.terraform.io/modules/upmaru/instellar/aws/latest)
-
-+ `access_key` - AWS access token
-
-+ `secret_key` - AWS secret key
-
-+  `cluster_topology` - parameter allows you to input how many nodes you wish to have in your cluster. The more nodes the more computing power you have.
-
-+  `cluster_name` - attribute is an arbitrary name you can use to name your cluster. This will also be prefixed to everything that is generated inside your infrastructure. 
-
-+ `ssh_keys` - This represents the key id for the ssh key inside of your digital ocean account. If you have not setup your ssh key before see the [next section](#ssh-key).
-
-```hcl
-module "instellar" {
-  source = "upmaru/instellar/aws"
-  version = "0.3.6"
-
-  access_key   = var.aws_access_key
-  secret_key   = var.aws_secret_key
-  cluster_name = "fruits"
-  cluster_topology = [
-    {id = 1, name = "apple", size = "c5a.large"},
-    {id = 2, name = "watermelon", size = "c5a.large"}
-  ]
-  
-  storage_size = 40
-
-  # Name of key is from your aws console
-  # you manually add this via the GUI
-  ssh_keys = [
-    "zack-studio",
-    "zack-one-eight"
-  ]
-}
-
-output "trust_token" {
-  value = module.instellar.trust_token
-}
-
-output "cluster_address" {
-  value = module.instellar.cluster_address
-}
-```
+You can get the `instellar_auth_token` by [signing up](https://web.instellar.app/auth/registrations/new) and heading over to the `Credentials` page on instellar.
 
 ### SSH Key
 
@@ -96,46 +53,6 @@ You can import the key pair by copying your public key and paste it in the box.
 ![import key pair](/docs/aws/import-key-pair-form.png)
 
 Once you've added your public key you can copy the name and use it in your `main.tf`.
-
-## Final File
-
-Putting it all together your `main.tf` should look like the following.
-
-```hcl
-variable "aws_access_key" {}
-variable "aws_secret_key" {}
-
-module "instellar" {
-  source = "upmaru/instellar/aws"
-  version = "0.3.6"
-
-  access_key   = var.aws_access_key
-  secret_key   = var.aws_secret_key
-  cluster_name = "fruits"
-  cluster_topology = [
-    {id = 1, name = "apple", size = "c5a.large"},
-    {id = 2, name = "watermelon", size = "c5a.large"}
-  ]
-  
-  storage_size = 40
-
-  # Name of key is from your aws console
-  # you manually add this via the GUI
-  ssh_keys = [
-    "your-key-name"
-  ]
-}
-
-output "trust_token" {
-  value = module.instellar.trust_token
-}
-
-output "cluster_address" {
-  value = module.instellar.cluster_address
-}
-```
-
-Once youv'e made your edits according to your liking commit the code. Before running `terraform apply` do make sure your `aws_access_key` and `aws_secret_key` are in place.
 
 ## AWS Access and Secret Key
 
@@ -205,27 +122,4 @@ terraform init
 terraform plan
 terraform apply
 ```
-
-## Running on Terraform Cloud
-
-
-<Callout title="Terraform Cloud">
-You'll need a terraform cloud account to use this guide. If you haven't set this up you can follow [this guide](/docs/setup-a-cluster/terraform/#terraform-cloud).
-</Callout>
-
-Click on `Configure variables`.
-
-![configure workspace](/docs/terraform/configure-workspace.png)
-
-You'll reach the `Variables` page. Click on `+ Add variable`.
-
-![configure variables](/docs/terraform/configure-variables.png)
-
-For the `Key` field enter `aws_access_key`, and for the `Value` enter the token you copied from digital ocean. Then hit `Save variable`. Repeat the step for `aws_secret_key`.
-
-![enter digital ocean token](/docs/aws/enter-your-token.png)
-
-Once you've entered the token you can do a `git push origin master` or `git push origin main` to your repository. Terraform cloud will automatically start running your modules.
-
-You can also trigger runs using the terraform cloud ui.
 

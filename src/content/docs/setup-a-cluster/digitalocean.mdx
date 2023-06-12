@@ -12,7 +12,7 @@ import { Callout } from '@components/Callout'
 
 ## Setup Project
 
-You can use our [terraform-module-template](https://github.com/upmaru/terraform-module-template) to create a repository. Click on the `Use this template` link on the repo.
+You can use our [terraform-module-template](https://github.com/insterra/digitalocean-compute) to create a repository. Click on the `Use this template` link on the repo.
 
 ![use module template](/docs/github/use-module-template.png)
 
@@ -26,59 +26,17 @@ git clone git@github.com:<your-organization>/<your-repo>.git
 
 ### Cluster Bootstrap
 
-Next we will need to delcare some variables in our `main.tf`. We'll start with `do_token`.
+Once you've cloned down the repository simply replace the `cluster_name` with the desired name for your cluster. You can also update the `node_size` and the `size` parameter in the `cluster_topology` based on the value you wish to use from list of slugs provided by digitalocean.
+
+Once you've updated the values create a `.auto.tfvars` and add your tokens.
 
 ```hcl
-variable "do_token" {}
+do_token = <your digital ocean api token>
+instellar_auth_token = <your instellar auth token>
 ```
 
-Next we'll define the `instellar` module. Below is an explanation of all the attributes.
+You can get the `instellar_auth_token` by [signing up](https://web.instellar.app/auth/registrations/new) and heading over to the `Credentials` page on instellar.
 
-+ `source` - defines the module we will be using.
-
-+ `version` - check for the latest version [here](https://registry.terraform.io/modules/upmaru/instellar/digitalocean/latest)
-
-+ `do_token` - variable is where you'll use the variable that was defined previously. We will feed the token into the terraform cloud UI later.
-
-+  `cluster_topology` - parameter allows you to input how many nodes you wish to have in your cluster. The more nodes the more computing power you have.
-
-You can get digital ocean's node size [from here](https://slugs.do-api.dev/)
-
-+  `cluster_name` - attribute is an arbitrary name you can use to name your cluster. This will also be prefixed to everything that is generated inside your infrastructure. 
-
-+ `ssh_keys` - This represents the key id for the ssh key inside of your digital ocean account. If you have not setup your ssh key before see the [next section](#ssh-key).
-
-```hcl
-module "instellar" {
-  source  = "upmaru/instellar/digitalocean"
-  version = "0.3.3"
-
-  do_token     = var.do_token
-  cluster_name = "fruits"
-  vpc_ip_range = "10.0.2.0/24"
-  cluster_topology = [
-    { id = 1, name = "apple", size = "s-2vcpu-2gb-amd" },
-    { id = 2, name = "watermelon", size = "s-2vcpu-2gb-amd" }
-  ]
-  node_size    = "s-2vcpu-2gb-amd"
-  # this number should be the value of storage from your node type and subtract 10
-  # for example if you are using s-2vcpu-2gb-amd with 60GB you can use 50
-  storage_size = 50
-
-  # SSH Keys added to digital account via UI
-  ssh_keys = [
-    "<ssh-key-fingerprint>"
-  ]
-}
-
-output "trust_token" {
-  value = module.instellar.trust_token
-}
-
-output "cluster_address" {
-  value = module.instellar.cluster_address
-}
-```
 
 ### SSH Key
 
@@ -100,106 +58,6 @@ Copy your public key from the command line and paste it in the `SSH Key content`
 
 Once add the ssh key you can copy the finger print and use it in your `main.tf`.
 
-## Database Setup
-
-<Callout title="Database is Optional">
-This section is optional if you do not need a database. If you prefer you can also setup your database by hand. But the advantage of using this module is it'll do all the heavy lifting for you if you need a database on DigitalOcean.
-</Callout>
-
-Next up step we'll configure our database. Below is an explanation for all the attributes
-
-+ `cluster_vpc_id` - This is the VPC that was setup in the bootstrap step. We want to put the database in the same VPC so we'll reference it from the `instellar` module.
-
-+ `cluster_name` - We want the same `cluster_name` as the cluster bootstrap stage. So we're inheriting from the module
-
-+ `region` - We want the database to be in the same region as the cluster bootstrap.
-
-+ `db_cluster_suffix` - This is an arbitrary name you can use to identify your database cluster.
-
-+ `db_access_tag_id` - This is the id of the tag which all the nodes in your cluster that should be able to access the database has. It will be used in teh firewall rule for the database to control the specific nodes that have access to the database.
-
-+ `db_cluster_size` - This is the size of the database please reference [this page](https://docs.digitalocean.com/reference/api/api-reference/#tag/Databases) to see the list of available sizes.
-
-+ `engine` - Digital ocean supports a few types of database engine, the default is `pg`. You can create multiple databases in your cluster. Available options are `pg`, `mysql`, `redis`, `mongodb`.
-
-+ `engine_version` - This is the version of the database engine you wish to use.
-
-  + `pg` - at the time of writing this doc `11`, `12`, `13`, `14`, `15`
-  
-  + `mysql` - at the time of writing `8`
-  
-  + `redis` - at the time of writing `6`
-  
-  + `mongodb` - at the time of writing `4.4`, `5.0`
-  
-+ `project_id` - Referene to the project_id as a part of boostrapping in the first module. This will put the database cluster under the same digital ocean project as the nodes and bastion. 
-
-
-```hcl
-module "instellar_database" {
-  source  = "upmaru/instellar/digitalocean//modules/database"
-  version = "0.3.3"
-
-  do_token          = var.do_token
-  cluster_vpc_id    = module.instellar.cluster_vpc_id
-  cluster_name      = module.instellar.cluster_name
-  region            = module.instellar.region
-  db_cluster_suffix = "alpha"
-  db_access_tag_id  = module.instellar.db_access_tag_id
-  db_cluster_size   = "db-s-2vcpu-4gb"
-  engine            = "pg"
-  engine_version    = "14"
-  project_id        = module.instellar.project_id
-}
-```
-
-## Final File
-
-Putting everything together your `main.tf` should look like the following.
-
-```hcl
-variable "instellar_do_token" {}
-
-module "instellar" {
-  source  = "upmaru/instellar/digitalocean"
-  version = "0.3.3"
-
-  do_token     = var.instellar_do_token
-  cluster_size = 3
-  cluster_name = "orion"
-  vpc_ip_range = var.instellar_ip_range
-  ssh_keys     = [
-    "52:0d:1a:16:5e:64:22:28:1c:ec:3a:72:ce:2f:77:ba"
-  ]
-}
-
-module "instellar_database" {
-  source  = "upmaru/instellar/digitalocean//modules/database"
-  version = "0.3.3"
-
-  do_token          = var.instellar_do_token
-  cluster_vpc_id    = module.instellar.cluster_vpc_id
-  cluster_name      = module.instellar.cluster_name
-  region            = module.instellar.region
-  db_cluster_suffix = "alpha"
-  db_access_tag_id  = module.instellar.db_access_tag_id
-  db_cluster_size   = "db-s-2vcpu-4gb"
-  engine            = "pg"
-  engine_version    = "14"
-  project_id        = module.instellar.project_id
-}
-
-output "trust_token" {
-  value = module.instellar.trust_token
-}
-
-output "cluster_address" {
-  value = module.instellar.cluster_address
-}
-```
-
-Once you've made your edits according to your liking commit the code, however before you push or run `terraform apply` make sure the `do_token` is in place. See instruction for managing `do_token` locally [below](/docs/setup-a-cluster/digitalocean/#running-locally-via-cli)
-
 ## API Token
 
 Let's look at how we can retrieve the API token to be used with digital ocean on terraform cloud.
@@ -212,7 +70,7 @@ You'll see the personal access token area. Click on the `Generate New Token` but
 
 ![personal access tokens](/docs/digital-ocean/personal-access-tokens.png)
 
-Give your token a name. I suggest naming it with your cluster name and prefix it with `terraform`. So you know this token is being utilized by terraform cloud.
+Give your token a name. I suggest naming it with your cluster name and prefix it with `terraform`. So you know this token is being utilized by terraform.
 
 For expiration you can use `90 days` or longer. Do remember to change this token in terraform cloud. 
 
@@ -243,25 +101,3 @@ terraform init
 terraform plan
 terraform apply
 ```
-
-## Running on Terraform Cloud
-
-<Callout title="Terraform Cloud">
-You'll need a terraform cloud account to use this guide. If you haven't set this up you can follow [this guide](/docs/setup-a-cluster/terraform/#terraform-cloud).
-</Callout>
-
-Click on `Configure variables`.
-
-![configure workspace](/docs/terraform/configure-workspace.png)
-
-You'll reach the `Variables` page. Click on `+ Add variable`.
-
-![configure variables](/docs/terraform/configure-variables.png)
-
-For the `Key` field enter `instellar_do_token`, and for the `Value` enter the token you copied from digital ocean. Then hit `Save variable`.
-
-![enter digital ocean token](/docs/digital-ocean/enter-your-token.png)
-
-Once you've entered the token you can do a `git push origin master` or `git push origin main` to your repository. Terraform cloud will automatically start running your modules.
-
-You can also trigger runs using the terraform cloud ui.
