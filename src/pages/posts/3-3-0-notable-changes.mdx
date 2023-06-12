@@ -1,0 +1,66 @@
+---
+layout: "../../layouts/Blog.astro"
+id: 10
+title: "What's new in 3.3.0"
+pubDate: 2023-05-17
+description: "We've reached a huge milestone with version 3.3.0 with our platform. In this post we go through what's new."
+author:
+  avatar: /authors/zack-siri.jpeg
+  name: "Zack Siri"
+  position: "Founder / CEO"
+tags: ["announcement"]
+image:
+  url: /posts/3-3-0-notable-changes/cover.jpg
+  alt: Cover image for 3.3.0 Notable Changes
+---
+import { YouTube } from '@astro-community/astro-embed-youtube'
+
+
+# 3.3.0 Notable Changes
+
+This release marks a huge milestone in our platform. We've introduced a lot of new features under the hood to support more automation. This means developers can get to deploying applications much quicker.
+
+## Provisioning Automation API
+
+We've implemented a new set of APIs that is designed to work with our [terraform provider](https://registry.terraform.io/providers/upmaru/instellar/latest). This means you can create custom terraform modules to personalize your setup or use our [pre-configured modules](https://github.com/insterra) to get up and running quickly. You can see the automation in action in the example below.
+
+![automated provisioning](/posts/3-3-0-notable-changes/instellar-demo-v2-provisioning.gif)
+
+This means we would also need to have some mechanism to enable users to be able to manage their own credentials.
+
+## Credentials Management
+
+User will now have access to the credentials section. This means owners and producers of a given organization can issue new API Tokens to be used for automated provisioning. Let's take a look:
+
+![credentials management](/posts/3-3-0-notable-changes/credentials-management.png)
+
+![new credential form](/posts/3-3-0-notable-changes/new-credential-form.png)
+
+Users have the choice of choosing which type of token to generate, we currently support 2 types as of this moment
+
++ Provisioning - This token is designed to be used for automated provisioning and has access to endpoints tha will enable cluster setup.
+
++ Publishing - This token is designed to be used with version control / CI / CD systems that need to publish packages to instellar.
+
+Users will also have the ability to choose an expiry period for the token. 
+
+Should a given token need to be revoked the user also has the ability to `delete` the token.
+
+![new credential form](/posts/3-3-0-notable-changes/token-deletion.png)
+
+This gives users full automation control over their infrastructure setup. We're planning on adding more features to our provisioning API to enable even more automation.
+
+## Real-Time Updates on Installations
+
+Previously when upgrades or bootstrapping happens on a given installation there would be a delay between the update and when a given installation is mark as `synced`. We believe having real-time feedback of what's happening inside your platform is important. We've made it all real-time.
+
+![new credential form](/posts/3-3-0-notable-changes/real-time-event-update-instellar.gif)
+
+## New Product Demo
+
+We've also released a new video that highlights the automated provisioning and setup. In the video we show you how easy it is to setup your own developer platform and deploy applications to it.
+
+<YouTube id="zn4LI_b9KuM" />
+
+
+

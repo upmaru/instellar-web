@@ -12,7 +12,7 @@ import { Callout } from '@components/Callout'
 
 ## Setup Project
 
-You can use our [terraform-module-template](https://github.com/upmaru/terraform-module-template) to create a repository. Click on the `Use this template` link on the repo.
+You can use our [hcloud template](https://github.com/insterra/hcloud-compute) to create a repository. Click on the `Use this template` link on the repo.
 
 ![use module template](/docs/github/use-module-template.png)
 
@@ -26,53 +26,17 @@ git clone git@github.com:<your-organization>/<your-repo>.git
 
 ### Cluster Bootstrap
 
-Next we will need to delcare some variables in our `main.tf`. We'll start with `hcloud_token`. This will enable input on terraform cloud. Terraform cloud will need to access your digital ocean api token. This will enable us to do just that.
+Once you've cloned down the repository simply replace the `cluster_name` with the desired name for your cluster. You can also update the `node_size` and the `size` parameter in the `cluster_topology` based on the value you wish to use from list of slugs from hcloud.
+
+Once you've updated the values create a `.auto.tfvars` and add your tokens.
 
 ```hcl
-variable "hcloud_token" {}
+hcloud_token = <your hetzner api token>
+instellar_auth_token = <your instellar auth token>
 ```
 
-Next we'll define the `instellar` module. Below is an explanation of all the attributes
+You can get the `instellar_auth_token` by [signing up](https://web.instellar.app/auth/registrations/new) and heading over to the `Credentials` page on instellar.
 
-+ `source` - defines the module we will be using.
-
-+ `version` - check for the latest version [here](https://registry.terraform.io/modules/upmaru/instellar/hcloud/latest)
-
-+ `hcloud_token` - variable is where you'll use the variable that was defined previously. We will feed the token into the terraform cloud UI later.
-
-+  `cluster_topology` - parameter allows you to input how many nodes you wish to have in your cluster. The more nodes the more computing power you have. 
-
-+  `cluster_name` - attribute is an arbitrary name you can use to name your cluster. This will also be prefixed to everything that is generated inside your infrastructure. 
-
-+ `ssh_keys` - This represents the key id for the ssh key inside of your Hetzner cloud account. If you have not setup your ssh key before see the [next section](#ssh-key).
-
-```hcl
-module "instellar" {
-  source  = "upmaru/instellar/hcloud"
-  version = "0.3.0"
-
-  cluster_name = "fruits"
-  cluster_topology = [
-    { id = 1, name = "apple", size = "cpx11" },
-    { id = 2, name = "watermelon", size = "cpx11" }
-  ]
-  node_size    = "cpx11"
-  storage_size = 30
-
-  # SSH Keys added to digital account via UI
-  ssh_keys = [
-    "name-of-your-ssh-key"
-  ]
-}
-
-output "trust_token" {
-  value = module.instellar.trust_token
-}
-
-output "cluster_address" {
-  value = module.instellar.cluster_address
-}
-```
 
 ### SSH Key
 
@@ -91,48 +55,6 @@ This will print out your public key and you can copy it and paste it as the cont
 ![add ssh key](/docs/hetzner/add-ssh-key.png)
 
 Once you add the key, you can refrence the name inside the `main.tf` file.
-
-## Final file
-
-Putting it all together your `main.tf` should look like the following.
-
-```hcl
-//--------------------------------------------------------------------
-// Variables
-variable "hcloud_token" {}
-
-//--------------------------------------------------------------------
-// Modules
-module "instellar" {
-  source  = "upmaru/instellar/hcloud"
-  version = "0.3.0"
-
-  hcloud_token = var.hcloud_token
-  cluster_topology = [
-    { id = 1, name = "apple", size = "cpx11" },
-    { id = 2, name = "watermelon", size = "cpx11" }
-  ]
-  # Bootstrap Node
-  node_size    = "cpx11"
-
-  # SSH Keys added to digital account via UI
-  ssh_keys = [
-    "zack-one-eight",
-    "zack-mac-studio"
-  ]
-}
-
-output "trust_token" {
-  value = module.instellar.trust_token
-}
-
-output "cluster_address" {
-  value = module.instellar.cluster_address
-}
-```
-
-Once you've made your edits according to your liking commit the code, however before you push in the next step we will make sure the `hcloud_token` is in place.
-
 ## API Token
 
 Before you push to your repository let's look at how we can retrieve the API token to be used with Hetzner cloud on terraform cloud.
@@ -168,28 +90,6 @@ terraform init
 terraform plan
 terraform apply
 ```
-
-## Running on Terraform Cloud
-
-<Callout title="Terraform Cloud">
-You'll need a terraform cloud account to use this guide. If you haven't set this up you can follow [this guide](/docs/setup-a-cluster/terraform/#terraform-cloud).
-</Callout>
-
-Click on `Configure variables`.
-
-![configure workspace](/docs/terraform/configure-workspace.png)
-
-You'll reach the `Variables` page. Click on `+ Add variable`.
-
-![configure variables](/docs/terraform/configure-variables.png)
-
-For the `Key` field enter `hcloud_token`, and for the `Value` enter the token you copied from Hetzner. Then hit `Add variable`.
-
-![enter digital ocean token](/docs/hetzner/enter-token.png)
-
-Once you've entered the token you can do a `git push origin master` or `git push origin main` to your repository. Terraform cloud will automatically start provisioning your cluster.
-
-You can also trigger runs using the terraform cloud ui.
 
 
 

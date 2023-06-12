@@ -83,8 +83,8 @@ const MainNav: FunctionComponent<MainNavProps> = (props) => {
                   {link.text}
                 </a>
                 {link.subLinks ? <ul className="space-y-9 ml-6 my-2">
-                  {link.subLinks.map((section) => (
-                    <li key={section}>
+                  {link.subLinks.map((section: {title: string, links: [{id: number, title: string, href: string}]}) => (
+                    <li key={section.title}>
                       <h2 className="font-display font-medium text-slate-900 dark:text-white">
                         {section.title}
                       </h2>  
