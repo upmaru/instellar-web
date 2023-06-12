@@ -16,6 +16,7 @@
 		"@astrojs/react": "^2.2.1",
 		"@astrojs/tailwind": "^3.0.1",
 		"@cloudflare/stream-react": "^1.8.0",
+		"@esbuild/darwin-arm64": "^0.18.1",
 		"@headlessui/react": "^1.7.13",
 		"@heroicons/react": "^2.0.16",
 		"@octokit/rest": "^19.0.11",
@@ -34,9 +35,9 @@
 		"tailwindcss": "^3.2.7"
 	},
 	"devDependencies": {
-		"@types/prismjs": "^1.26.0",
 		"@tailwindcss/typography": "^0.5.9",
 		"@types/lodash": "^4.14.192",
+		"@types/prismjs": "^1.26.0",
 		"@types/react": "^18.0.28",
 		"@types/react-dom": "^18.0.11"
 	}

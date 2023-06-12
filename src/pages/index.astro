@@ -15,6 +15,8 @@ import TerraformWidget from '@components/TerraformWidget'
 
 import { Octokit } from '@octokit/rest'
 
+import { Stream } from '@cloudflare/stream-react'
+
 const octokit = new Octokit({
   auth: import.meta.env.GITHUB_TOKEN
 })
@@ -69,7 +71,7 @@ const templates: any = await Promise.all(terraformRepos.map(buildTemplate))
           </div>
         </div>
         <div class="mt-20">
-          <div style="position: relative; padding-top: 56.25%;"><iframe src="https://customer-t0vfjtwy8tnd3o1g.cloudflarestream.com/a41cc753d37a85879c78759bfeabd702/iframe?muted=true&autoplay=true&poster=https%3A%2F%2Fcustomer-t0vfjtwy8tnd3o1g.cloudflarestream.com%2Fa41cc753d37a85879c78759bfeabd702%2Fthumbnails%2Fthumbnail.jpg%3Ftime%3D1m43s%26height%3D600&startTime=1m43s" style="border: none; position: absolute; top: 0; left: 0; height: 100%; width: 100%;" allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;" allowfullscreen="true"></iframe></div>
+          <Stream controls autoplay muted preload="auto" startTime="1m43s" src="a41cc753d37a85879c78759bfeabd702" client:only />
         </div>
       </div>
     </div>
