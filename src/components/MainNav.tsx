@@ -18,16 +18,18 @@ const MainNav: FunctionComponent<MainNavProps> = (props) => {
     { href: '/pricing/yearly/', text: 'Pricing'},
     { href: '/docs/getting-started/', text: 'Docs', subLinks: props.docsLinks },
     { href: '/blog/', text: 'Blog' },
-    { href: 'https://web.instellar.app/auth/sessions/new', target: '_blank', text: 'Sign in' }
   ]
 
   return (
     <Popover>
       <nav className={`mx-auto flex ${width} items-center justify-between p-6 lg:px-8`} aria-label="Global">
-        <a href="/" className="-m-1.5 p-1.5">
-          <span className="sr-only">Instellar.app</span>
-          <img className="h-8 w-auto" src="/instellar-logo.png" alt="" />
-        </a>
+        <div className="flex lg:flex-1">
+          <a href="/" className="-m-1.5 p-1.5 flex gap-5 items-center">
+            <span className="sr-only">Instellar.app</span>
+            <img className="h-8 w-auto" src="/instellar-logo.png" alt="instellar.app" />
+            <span className="font-medium text-xl tracking-tight text-slate-200">instellar.app</span>
+          </a>
+        </div>
         <div className="-mr-2 flex items-center lg:hidden">
           <Popover.Button className="inline-flex items-center justify-center rounded-md p-2 text-slate-700 hover:text-slate-500 focus:outline-none">
             <span className="sr-only">Open main menu</span>
@@ -38,10 +40,13 @@ const MainNav: FunctionComponent<MainNavProps> = (props) => {
           {links.map((link) => {
             const className = `font-semibold text-sm ${pathname === link.href ? 'text-purple-400 hover:text-purple-400' : 'text-white'}`
 
-            return <a key={link.text} href={link.href} target={link.target} className={className}>
+            return <a key={link.text} href={link.href} className={className}>
               {link.text}
             </a>
           })}
+        </div>
+        <div className="hidden lg:flex lg:flex-1 lg:justify-end">
+          <a href="https://web.instellar.app/auth/sessions/new" className="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm hover:bg-gray-50">Sign In</a>
         </div>
       </nav>
 
