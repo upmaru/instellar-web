@@ -63,15 +63,15 @@ const templates: any = await Promise.all(terraformRepos.map(buildTemplate))
     <div class="py-24 sm:py-32 lg:pb-40">
       <div class="mx-auto max-w-7xl px-6 lg:px-8">
         <div class="mx-auto max-w-2xl text-center">
-          <h1 class="text-4xl font-bold tracking-tight text-white sm:text-6xl">Your own developer portal in minutes</h1>
-          <p class="mt-6 text-lg leading-8 text-gray-300">Deploy apps to your own servers effortlessly without paying a premium.</p>
+          <h1 class="text-4xl font-bold tracking-tight text-white sm:text-6xl">The new way to package and deploy apps in one step</h1>
+          <p class="mt-6 text-lg leading-8 text-gray-300">Deploy straight to the infra of your choice. Instellar containerizes and deploys in less than 5 minutes. You can focus on shipping.</p>
           <div class="mt-10 flex items-center justify-center gap-x-6">
             <a href="https://web.instellar.app/auth/registrations/new" target="_blank" class="rounded-md bg-purple-500 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-purple-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-400">Get started</a>
             <a href="/docs/getting-started/" class="text-sm font-semibold leading-6 text-white">Learn more <span aria-hidden="true">→</span></a>
           </div>
         </div>
         <div class="mt-20">
-          <Stream controls autoplay muted preload="auto" startTime="1m43s" src="a41cc753d37a85879c78759bfeabd702" client:only />
+          <Stream controls defaultTextTrack="en" muted preload="auto" startTime="1m43s" src="a41cc753d37a85879c78759bfeabd702" client:only />
         </div>
       </div>
     </div>
@@ -79,7 +79,40 @@ const templates: any = await Promise.all(terraformRepos.map(buildTemplate))
       <div class="relative left-[calc(50%+3rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-20 sm:left-[calc(50%+36rem)] sm:w-[72.1875rem]" style="clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)"></div>
     </div>
   </div>
-  <div class="relative isolate">
+  <div class="bg-slate-800 py-24 sm:py-32 border-t border-b border-slate-700">
+    <div class="mx-auto max-w-7xl px-6 lg:px-8">
+      <div class="mx-auto max-w-2xl lg:max-w-none">
+        <h2 class="text-lg font-semibold leading-8 text-white">Currently works with:</h2>
+        <div class="mx-auto mt-10 grid grid-cols-4 items-start gap-x-8 gap-y-10 sm:grid-cols-6 sm:gap-x-10 lg:mx-0 lg:grid-cols-5">
+          <a href="/docs/language-and-framework/go/">
+            <i class="devicon-go-original-wordmark text-white col-span-2 max-h-12 w-full object-contain object-left lg:col-span-1 text-5xl"></i>
+          </a>
+          <a href="/docs/language-and-framework/ruby/">
+            <i class="devicon-rails-plain text-white col-span-2 max-h-12 w-full object-contain object-left lg:col-span-1 text-5xl"></i>
+          </a>
+          <a href="/docs/language-and-framework/next-js/">
+            <i class="devicon-nextjs-original text-white col-span-2 max-h-12 w-full object-contain object-left lg:col-span-1 text-5xl"></i>
+          </a>
+          <a href="/docs/language-and-framework/next-js/">
+            <i class="devicon-nodejs-plain text-white col-span-2 max-h-12 w-full object-contain object-left lg:col-span-1 text-5xl"></i>
+          </a>
+          <a href="/docs/language-and-framework/python/">
+            <i class="devicon-python-plain text-white col-span-2 max-h-12 w-full object-contain object-left lg:col-span-1 text-5xl"></i>
+          </a>
+          <a href="/docs/language-and-framework/python/">
+            <i class="devicon-django-plain text-white col-span-2 max-h-12 w-full object-contain object-left lg:col-span-1 text-5xl"></i>
+          </a>
+          <a href="/docs/language-and-framework/elixir/">
+            <i class="devicon-elixir-plain text-white col-span-2 max-h-12 w-full object-contain object-left lg:col-span-1 text-5xl"></i>
+          </a>
+          <a href="/docs/language-and-framework/elixir/">
+            <i class="devicon-phoenix-plain text-white col-span-2 max-h-12 w-full object-contain object-left lg:col-span-1 text-5xl"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="relative isolate pt-24 sm:pt-32">
     <div class="mx-auto max-w-7xl px-6 lg:px-8">
       <TerraformWidget templates={templates} client:load />
     </div>
@@ -128,39 +161,6 @@ const templates: any = await Promise.all(terraformRepos.map(buildTemplate))
       <div class="mx-auto mt-16 flex max-w-2xl sm:mt-24 lg:ml-10 lg:mt-0 lg:mr-0 lg:max-w-none lg:flex-none xl:ml-32">
         <div class="max-w-3xl flex-none sm:max-w-5xl lg:max-w-none">
           <img src="/screens/dashboard.png" alt="App screenshot" width="2432" height="1442" class="w-[76rem] rounded-md bg-white/5 shadow-2xl ring-1 ring-white/10">
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="bg-slate-800 py-24 sm:py-32 border-t border-b border-slate-700">
-    <div class="mx-auto max-w-7xl px-6 lg:px-8">
-      <div class="mx-auto max-w-2xl lg:max-w-none">
-        <h2 class="text-lg font-semibold leading-8 text-white">Currently works with:</h2>
-        <div class="mx-auto mt-10 grid grid-cols-4 items-start gap-x-8 gap-y-10 sm:grid-cols-6 sm:gap-x-10 lg:mx-0 lg:grid-cols-5">
-          <a href="/docs/language-and-framework/go/">
-            <i class="devicon-go-original-wordmark text-white col-span-2 max-h-12 w-full object-contain object-left lg:col-span-1 text-5xl"></i>
-          </a>
-          <a href="/docs/language-and-framework/ruby/">
-            <i class="devicon-rails-plain text-white col-span-2 max-h-12 w-full object-contain object-left lg:col-span-1 text-5xl"></i>
-          </a>
-          <a href="/docs/language-and-framework/next-js/">
-            <i class="devicon-nextjs-original text-white col-span-2 max-h-12 w-full object-contain object-left lg:col-span-1 text-5xl"></i>
-          </a>
-          <a href="/docs/language-and-framework/next-js/">
-            <i class="devicon-nodejs-plain text-white col-span-2 max-h-12 w-full object-contain object-left lg:col-span-1 text-5xl"></i>
-          </a>
-          <a href="/docs/language-and-framework/python/">
-            <i class="devicon-python-plain text-white col-span-2 max-h-12 w-full object-contain object-left lg:col-span-1 text-5xl"></i>
-          </a>
-          <a href="/docs/language-and-framework/python/">
-            <i class="devicon-django-plain text-white col-span-2 max-h-12 w-full object-contain object-left lg:col-span-1 text-5xl"></i>
-          </a>
-          <a href="/docs/language-and-framework/elixir/">
-            <i class="devicon-elixir-plain text-white col-span-2 max-h-12 w-full object-contain object-left lg:col-span-1 text-5xl"></i>
-          </a>
-          <a href="/docs/language-and-framework/elixir/">
-            <i class="devicon-phoenix-plain text-white col-span-2 max-h-12 w-full object-contain object-left lg:col-span-1 text-5xl"></i>
-          </a>
         </div>
       </div>
     </div>
