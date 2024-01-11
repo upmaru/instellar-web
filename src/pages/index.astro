@@ -11,51 +11,51 @@ import MagnifyingGlassCircle from 'astro-heroicons/solid/MagnifyingGlassCircle.a
 import Users from 'astro-heroicons/solid/Users.astro'
 import DocumentText from 'astro-heroicons/solid/DocumentText.astro'
 
-import TerraformWidget from '@components/TerraformWidget'
+// import TerraformWidget from '@components/TerraformWidget'
 
 import { Octokit } from '@octokit/rest'
 
 import { Stream } from '@cloudflare/stream-react'
 
-const octokit = new Octokit({
-  auth: import.meta.env.GITHUB_TOKEN
-})
+// const octokit = new Octokit({
+//   auth: import.meta.env.GITHUB_TOKEN
+// })
 
-const repos = await octokit.repos.listForOrg({
-  org: "insterra", 
-  type: "public",
-  sort: "full_name"
-})
+// const repos = await octokit.repos.listForOrg({
+//   org: "insterra", 
+//   type: "public",
+//   sort: "full_name"
+// })
 
-const terraformRepos = repos.data.filter((repo) => {
-  return repo.language === "HCL" 
-    && ["aws-compute", "digitalocean-compute", "hcloud-compute"].includes(repo.name) 
-})
+// const terraformRepos = repos.data.filter((repo) => {
+//   return repo.language === "HCL" 
+//     && ["aws-compute", "digitalocean-compute", "hcloud-compute"].includes(repo.name) 
+// })
 
-const icons: {[key: string]: string} = {
-  "aws-compute": "/docs/aws/aws-logo.png",
-  "digitalocean-compute": "/docs/digital-ocean/do-logo.png",
-  "hcloud-compute": "/docs/hetzner/hetzner-logo.png"
-}
+// const icons: {[key: string]: string} = {
+//   "aws-compute": "/docs/aws/aws-logo.png",
+//   "digitalocean-compute": "/docs/digital-ocean/do-logo.png",
+//   "hcloud-compute": "/docs/hetzner/hetzner-logo.png"
+// }
 
-async function buildTemplate(repo: any) {
-  const c = await octokit.repos.getContent({
-    owner: repo.owner.login,
-    repo: repo.name,
-    path: "main.tf"
-  }) as {data: {content: string}}
+// async function buildTemplate(repo: any) {
+//   const c = await octokit.repos.getContent({
+//     owner: repo.owner.login,
+//     repo: repo.name,
+//     path: "main.tf"
+//   }) as {data: {content: string}}
 
-  return ({
-    id: repo.id,
-    name: repo.name,
-    description: repo.description,
-    html_url: repo.html_url,
-    content: atob(c.data.content),
-    icon: icons[repo.name]
-  })
-}
+//   return ({
+//     id: repo.id,
+//     name: repo.name,
+//     description: repo.description,
+//     html_url: repo.html_url,
+//     content: atob(c.data.content),
+//     icon: icons[repo.name]
+//   })
+// }
 
-const templates: any = await Promise.all(terraformRepos.map(buildTemplate))
+// const templates: any = await Promise.all(terraformRepos.map(buildTemplate))
 ---
 
 <Main title="PaaS on your terms - Instellar.app">
@@ -110,11 +110,6 @@ const templates: any = await Promise.all(terraformRepos.map(buildTemplate))
           </a>
         </div>
       </div>
-    </div>
-  </div>
-  <div class="relative isolate pt-24 sm:pt-32">
-    <div class="mx-auto max-w-7xl px-6 lg:px-8">
-      <TerraformWidget templates={templates} client:load />
     </div>
   </div>
 	<div class="relative isolate overflow-hidden">
