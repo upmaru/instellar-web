@@ -11,51 +11,51 @@ import MagnifyingGlassCircle from 'astro-heroicons/solid/MagnifyingGlassCircle.a
 import Users from 'astro-heroicons/solid/Users.astro'
 import DocumentText from 'astro-heroicons/solid/DocumentText.astro'
 
-import TerraformWidget from '@components/TerraformWidget'
+// import TerraformWidget from '@components/TerraformWidget'
 
 import { Octokit } from '@octokit/rest'
 
 import { Stream } from '@cloudflare/stream-react'
 
-const octokit = new Octokit({
-  auth: import.meta.env.GITHUB_TOKEN
-})
+// const octokit = new Octokit({
+//   auth: import.meta.env.GITHUB_TOKEN
+// })
 
-const repos = await octokit.repos.listForOrg({
-  org: "insterra", 
-  type: "public",
-  sort: "full_name"
-})
+// const repos = await octokit.repos.listForOrg({
+//   org: "insterra", 
+//   type: "public",
+//   sort: "full_name"
+// })
 
-const terraformRepos = repos.data.filter((repo) => {
-  return repo.language === "HCL" 
-    && ["aws-compute", "digitalocean-compute", "hcloud-compute"].includes(repo.name) 
-})
+// const terraformRepos = repos.data.filter((repo) => {
+//   return repo.language === "HCL" 
+//     && ["aws-compute", "digitalocean-compute", "hcloud-compute"].includes(repo.name) 
+// })
 
-const icons: {[key: string]: string} = {
-  "aws-compute": "/docs/aws/aws-logo.png",
-  "digitalocean-compute": "/docs/digital-ocean/do-logo.png",
-  "hcloud-compute": "/docs/hetzner/hetzner-logo.png"
-}
+// const icons: {[key: string]: string} = {
+//   "aws-compute": "/docs/aws/aws-logo.png",
+//   "digitalocean-compute": "/docs/digital-ocean/do-logo.png",
+//   "hcloud-compute": "/docs/hetzner/hetzner-logo.png"
+// }
 
-async function buildTemplate(repo: any) {
-  const c = await octokit.repos.getContent({
-    owner: repo.owner.login,
-    repo: repo.name,
-    path: "main.tf"
-  }) as {data: {content: string}}
+// async function buildTemplate(repo: any) {
+//   const c = await octokit.repos.getContent({
+//     owner: repo.owner.login,
+//     repo: repo.name,
+//     path: "main.tf"
+//   }) as {data: {content: string}}
 
-  return ({
-    id: repo.id,
-    name: repo.name,
-    description: repo.description,
-    html_url: repo.html_url,
-    content: atob(c.data.content),
-    icon: icons[repo.name]
-  })
-}
+//   return ({
+//     id: repo.id,
+//     name: repo.name,
+//     description: repo.description,
+//     html_url: repo.html_url,
+//     content: atob(c.data.content),
+//     icon: icons[repo.name]
+//   })
+// }
 
-const templates: any = await Promise.all(terraformRepos.map(buildTemplate))
+// const templates: any = await Promise.all(terraformRepos.map(buildTemplate))
 ---
 
 <Main title="PaaS on your terms - Instellar.app">
@@ -66,7 +66,7 @@ const templates: any = await Promise.all(terraformRepos.map(buildTemplate))
           <h1 class="text-4xl font-bold tracking-tight text-white sm:text-6xl">The new way to package and deploy apps in one step</h1>
           <p class="mt-6 text-lg leading-8 text-gray-300">Deploy straight to the infra of your choice. Instellar containerizes and deploys in less than 5 minutes. You can focus on shipping.</p>
           <div class="mt-10 flex items-center justify-center gap-x-6">
-            <a href="https://web.instellar.app/auth/registrations/new" target="_blank" class="rounded-md bg-purple-500 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-purple-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-400">Get started</a>
+            <a href="https://opsmaru.com/auth/users/register" target="_blank" class="rounded-md bg-purple-500 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-purple-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-400">Get started</a>
             <a href="/docs/getting-started/" class="text-sm font-semibold leading-6 text-white">Learn more <span aria-hidden="true">→</span></a>
           </div>
         </div>
@@ -112,11 +112,6 @@ const templates: any = await Promise.all(terraformRepos.map(buildTemplate))
       </div>
     </div>
   </div>
-  <div class="relative isolate pt-24 sm:pt-32">
-    <div class="mx-auto max-w-7xl px-6 lg:px-8">
-      <TerraformWidget templates={templates} client:load />
-    </div>
-  </div>
 	<div class="relative isolate overflow-hidden">
     <svg class="absolute inset-0 -z-10 h-full w-full stroke-white/10 [mask-image:radial-gradient(36rem_36rem_at_center,white,transparent)]" aria-hidden="true">
       <defs>
@@ -150,7 +145,7 @@ const templates: any = await Promise.all(terraformRepos.map(buildTemplate))
         <h2 class="mt-10 text-2xl font-bold tracking-tight text-white sm:text-4xl">Deploy apps on your servers easily!</h2>
         <p class="mt-6 text-lg leading-8 text-gray-300">Develop and push to github and deploy on your own hardware or cloud of your choice.</p>
         <div class="mt-10 flex items-center gap-x-6">
-          <a href="https://web.instellar.app/auth/registrations/new" target="_blank" class="rounded-md bg-purple-500 px-3.5 py-1.5 text-base font-semibold leading-7 text-white shadow-sm hover:bg-purple-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-400">
+          <a href="https://opsmaru.com/auth/users/register" target="_blank" class="rounded-md bg-purple-500 px-3.5 py-1.5 text-base font-semibold leading-7 text-white shadow-sm hover:bg-purple-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-400">
             Sign Up
           </a>
           <a href="/docs/getting-started/" class="text-sm font-semibold leading-6 text-white">

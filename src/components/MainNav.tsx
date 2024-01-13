@@ -46,7 +46,7 @@ const MainNav: FunctionComponent<MainNavProps> = (props) => {
           })}
         </div>
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-          <a href="https://web.instellar.app/auth/sessions/new" className="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm hover:bg-gray-50">Sign In</a>
+          <a href="https://opsmaru.com/auth/users/log_in" className="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm hover:bg-gray-50">Sign In</a>
         </div>
       </nav>
 

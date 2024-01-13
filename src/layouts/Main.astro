@@ -95,20 +95,5 @@ const { title, description, cover, url } = Astro.props
         <p class="mt-10 text-center text-xs leading-5 text-slate-300">&copy; {year} Upmaru, Inc. All rights reserved.</p>
       </div>
     </footer>
-    <script>
-      // @ts-ignore
-      window.$plain = window.$plain || [];
-      // @ts-ignore
-      let plain;
-      // @ts-ignore
-      typeof plain === 'undefined' && (plain = function () { $plain.push(arguments); });
-      // @ts-ignore
-      plain("init", {
-        appKey: "appKey_uk_01GVF02TAKK56DRGNPGAJ16N88"
-      });
-      // @ts-ignore
-      plain('set-theme', {brandColor: '#6b21a8'});
-    </script>
-    <script async src="https://customer-chat.cdn-plain.com/latest/customerChat.js"></script>
 	</body>
 </html>
