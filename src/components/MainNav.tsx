@@ -115,7 +115,7 @@ const MainNav: FunctionComponent<MainNavProps> = (props) => {
               })}
             </div>
             <a
-              href="https://web.instellar.app/auth/sessions/new" target="_blank"
+              href="https://opsmaru.com/auth/users/log_in" target="_blank"
               className="block w-full bg-slate-700/10 px-5 py-3 text-center font-medium text-white hover:bg-slate-600/10 hover:text-purple-500"
             >
               Sign in
